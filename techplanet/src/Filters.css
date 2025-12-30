@@ -1,0 +1,119 @@
+.filtersContainer{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 70vw;
+    padding-top: 2%;
+    justify-self: center;
+    /* margin-left: 15vw; */
+}
+
+.filter{
+    display: grid;
+    justify-content: center;
+    user-select: none;
+}
+
+.filtersComponent{
+    display: grid;
+    justify-content: center;
+}
+
+/* .brendsList{
+    color: black;
+    overflow: scroll;
+    height: 50px;
+} */
+
+/* .filt1{
+    width: 30px;
+} */
+
+.filtName{
+    border-radius: 10px;
+    /* background-color: rgb(207, 203, 203); */
+    background-color: rgb(211, 211, 211);
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color: rgb(92, 92, 92);
+    width: 120px;
+    display: grid;
+    justify-content: center;
+    height: 23px;
+    margin-bottom: 5%;
+    justify-self: center;
+}
+
+.catFilter{
+    /* background-color: rgb(229, 234, 238); */
+    border-radius: 5px;
+    padding: 5px;
+    display: grid;
+    justify-content: center;
+    box-shadow: 2px 3px 6px #a79191;
+    position: absolute;
+    z-index: 3;
+    margin-top: 32px;
+    background-color: rgb(253, 253, 253);
+    justify-self: center;
+
+}
+
+.brendFilter{
+    box-shadow: 2px 3px 6px #a79191;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 3;
+    /* padding: 5px; */
+    display: grid;
+    justify-content: center;
+    margin-top: 32px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: rgb(253, 253, 253);
+    justify-self: center;
+    padding: 5px;
+}
+
+.brendsList{
+    overflow-y: scroll;
+    height: 120px;
+}
+
+.clearCategory{
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    /* background-color: rgb(5, 111, 172); */
+    background-color: black;
+    /* color: rgb(138, 211, 230); */
+    color: azure;
+    /* color: rgb(152, 234, 255); */
+    /* font-weight: 700; */
+    font-weight: 500;
+    margin-top: 3px;
+}
+
+form label{
+    padding-bottom: 3px;
+}
+
+@media (max-width: 705px){
+
+    .filtersContainer{
+        width: 90vw;
+    }
+}
+
+@media (max-width: 500px){
+
+    .filtersContainer{
+        grid-template-columns: 1fr;
+    }
+
+    .filtName{
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+}

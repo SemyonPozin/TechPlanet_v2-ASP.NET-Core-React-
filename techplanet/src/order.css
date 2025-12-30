@@ -1,0 +1,117 @@
+.ordersContainer{
+    grid-column: 1/2;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    grid-template-columns: 1fr;
+}
+.obtainingForm{
+    margin-top: 5%;
+    display: grid;
+    justify-content: center;
+    width: 500px;
+    /* border: rgb(0, 25, 167) 1px solid; */
+    padding: 3% 0;
+    justify-self: center;
+    font-size: 18px;
+    background-color: rgb(243, 244, 245);
+    border-radius: 5px;
+    /* align-self: center; */
+}
+form .h{
+    font-size: 25px;
+    font-weight: bold;
+}
+.obtainingForm div{
+    padding-bottom: 3%;
+}
+.obtainingForm button{
+   width: 100px;
+   height: 25px;
+   justify-self: center;
+   border: none;
+   background-color: rgb(163, 231, 243);
+   color: rgb(6, 63, 110);
+   border-radius: 5px;
+   font-weight: bold;
+}
+input[type="time"]{
+    outline: rgb(42, 170, 255) solid 1px;
+    border: none;
+}
+.finishForm{
+    width: 450px;
+    display: grid;
+    justify-content: center;
+    justify-self: center;
+    font-size: 16px;
+    background-color: rgb(243, 244, 245);
+    border-radius: 5px;
+    grid-template-columns: 1fr;
+    padding: 3% 0;
+    margin-top: 5%;
+}
+.finishForm .goodsList{
+    /* grid-column: 1/2; */
+    width: 98%;
+    justify-self: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-top: 5%;
+}
+.finishForm .listItem{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: 3px 0;
+    /* border: 1px solid rgb(157, 220, 236); */
+    border: 1px solid rgb(216, 222, 224);
+    /* border: 1px solid rgb(138, 211, 230); */
+    border-radius: 7px;
+    margin-bottom: 1px;
+}
+.finishForm .itemImg img{
+    height: 50px;
+}
+.finishForm .ListItemInfo{
+    display: grid;
+    grid-column: 2/7;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
+    align-content: start;
+}
+.finishForm .ListItemName{
+    font-weight: bold;
+}
+.finishForm input[type="submit"]{
+    /* width: 100px; */
+    height: 25px;
+    justify-self: center;
+    border: none;
+    background-color: rgb(91, 204, 224);
+    /* background-color: rgb(163, 231, 243); */
+    /* background-color: black; */
+    /* color: rgb(6, 63, 110); */
+    color: azure;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 5%;
+}
+.adressInputs{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+}
+@media (max-width: 500px){
+    .obtainingForm, .finishForm{
+        width: 100%;
+        grid-column: 1/2;
+        border: none;
+        margin-top: 0;
+    }
+    /* .finishForm{
+        width: 100%;
+        grid-column: 1/2;
+        border: none;
+        margin-top: 0;
+    } */
+}

@@ -1,0 +1,5 @@
+{
+  "DatatbaseConfiguration": {
+    "ConnectionString": "Host=localhost;Port=5432;Database=postgres;Username=admin;Password=1111"
+  }
+}

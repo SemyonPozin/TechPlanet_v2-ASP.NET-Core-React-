@@ -1,0 +1,47 @@
+body{
+    margin: 0;
+    /* background-color: rgb(221, 221, 221); */
+    background-color: rgb(233, 233, 233);
+    min-height: 100%;
+    width: 100;
+  }
+
+  #root{
+    display: grid;
+  }
+
+  .App{
+    display: grid;
+    width: 100%;
+  }
+
+  .grid1{
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  
+  .grid2{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .grid3{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .grid4{
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .grid5{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  .grid6{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+  

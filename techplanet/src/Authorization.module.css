@@ -1,0 +1,187 @@
+form{
+    user-select: none;
+}
+
+.autForm{
+    background-color: rgb(248, 248, 248);
+    position: fixed;
+    z-index: 7;
+    color: rgb(128, 228, 253);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    justify-content: center;
+    align-content: center;
+    padding-bottom: 30px;
+    padding-top: 40px;
+    display: grid;
+    width: 320px;
+    /* gap: 15px; */
+    /* border: azure 4px solid; */
+    /* border-radius: 10px; */
+    grid-template-columns: 1fr;
+    box-shadow: 0px 4px 6px #a79191;
+    font-weight: 300;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.logForm{
+    background-color: rgb(248, 248, 248);
+    position: fixed;
+    z-index: 7;
+    color: rgb(128, 228, 253);
+    top: 50px;
+    right: 10px;
+    justify-content: center;
+    align-content: center;
+    padding-bottom: 30px;
+    padding-top: 40px;
+    display: grid;
+    width: 280px;
+    grid-template-columns: 1fr;
+    box-shadow: 0px 4px 6px #a79191;
+    font-weight: 300;
+    border-radius: 3px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.err{
+    font-size: 12px;
+    color: red;
+    height: 12px;
+}
+
+.forInput{
+    padding-top: 23px;
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+.input{
+    /* outline: 1px solid rgb(138, 211, 230); */
+    border: none;
+    /* border-top: 1px black solid; */
+    height: 25px;
+    /* width: 70%; */
+    justify-self: center;
+    border-radius: 3px;
+}
+
+.forPassParent{
+    display: grid;
+    grid-template-rows: repeat(2,1fr);
+    justify-content: center;
+    width: 100%;
+}
+
+.forPass{
+    margin-top: 23px;
+    /* width: 100%; */
+    display: flex;
+    justify-content: center;
+    margin-left: 30px;
+    justify-self: center;
+}
+
+/* .eye{
+    margin-left: 10px;
+} */
+
+.eyeContainer{
+    position: absolute;
+    /* padding-bottom: 20px; */
+    /* width: 100%;
+    height: 100%; */
+    /* display: grid; */
+    /* justify-content: end; */
+    margin-top: 121px;
+    margin-left: 85%;
+    z-index: 8;
+}
+
+/* .passErr{
+    justify-self: center;
+    font-size: 12px;
+    color: red;
+} */
+
+.submit{
+    justify-self: center;
+    background-color: rgb(37, 240, 105);
+    /* background-color: rgb(13, 126, 192); */
+    border: none;
+    height: 22px;
+    font-weight: bold;
+    color: azure;
+    border-radius: 2px;
+}
+
+.absol{
+    padding-right: 6%;
+    padding-top: 3%;
+    justify-self: end;
+    position: absolute;
+}
+
+.abs{
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+}
+
+.forLinks{
+    margin-top: 5px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    color: rgb(43, 107, 247);
+}
+
+.link{
+    font-size: 14px;
+}
+
+.quit{
+    background-color: black;
+    position: fixed;
+    z-index: 7;
+    color: azure;
+    top: 50px;
+    right: 10px;
+    justify-content: center;
+    align-content: center;
+    padding-bottom: 30px;
+    padding-top: 40px;
+    display: grid;
+    width: 240px;
+    grid-template-columns: 1fr;
+    /* box-shadow: 0px 4px 6px #a79191; */
+    font-weight: 300;
+    border-radius: 3px;
+    font-size: 20px;
+    user-select: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.hello{
+    display: grid;
+    justify-content: center;
+}
+
+.userPic{
+    border-radius: 200px;
+    width: 35px;
+    height: 35px;
+}
+
+.leave{
+    display: grid;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.leave:hover{
+    color: red;
+}

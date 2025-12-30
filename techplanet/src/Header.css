@@ -1,0 +1,138 @@
+@font-face {
+    font-family: RubikGlitch;
+    src: url(fonts/RubikGlitch-Regular.ttf);
+}
+
+header{
+    background-color: black;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    font-size: 25px;
+    font-family: RubikGlitch;
+    user-select: none;
+}
+
+.menumobile{
+    color: rgb(138, 211, 230);
+    /* display: block; */
+    display: grid;
+    align-items: center;
+    /* font-weight: bold; */
+    padding-bottom: 0.5%;
+    grid-column: 2/3;
+    text-align: end;
+    /* margin-left: 3%; */
+}
+
+.menu{
+    display: flex;
+    color: rgb(138, 211, 230);
+    font-size: 20px;
+    justify-content: space-around;
+    align-items: center;
+    
+}
+
+.hamb{
+    margin-right: 4%;
+    font-weight: bold;
+}
+
+.cross{
+    margin-left: 15%;
+    text-align: center;
+}
+
+.point{
+    display: grid;
+    justify-content: center;
+    /* color: rgb(229, 234, 238); */
+}
+
+.headerLink:hover{
+    text-shadow: 0px 0px 1px ;
+    color: rgb(190, 242, 255);
+    transition-delay: 0.05s;
+}
+
+.abs{
+    position: absolute;
+    display: block;
+    background-color: black;
+    right: 0;
+    top: 0;
+    padding-right: 10px;
+    padding-left: 10px;
+    z-index: 4;
+}
+
+.logo{
+    /* color: rgb(190, 242, 255); */
+    color: rgb(138, 211, 230);
+
+    padding: 3%;
+}
+
+.headerLink{
+    color: rgb(138, 211, 230);
+    text-decoration: none;
+}
+
+.beanCount{
+    background-color: red;
+    width: 11px;
+    height: 11px;
+    position: absolute;
+    z-index: 10;
+    color: azure;
+    font-size: 10px;
+    font-weight: 100;
+    border-radius: 5px;
+    display: grid;
+    justify-content: center;
+    align-content: end;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin-left: 85px;
+    margin-top: 2px;
+}
+
+.beanCountMobile{
+    background-color: red;
+    width: 11px;
+    height: 11px;
+    position: absolute;
+    z-index: 10;
+    color: azure;
+    font-size: 10px;
+    font-weight: 100;
+    border-radius: 5px;
+    display: grid;
+    justify-content: center;
+    align-content: end;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin-left: 110px;
+    margin-top: 3px;
+    /* margin-bottom: 1px; */
+}
+
+.outline{
+    outline: red 2px solid;
+}
+
+@media (min-width: 1140px){
+
+    header{
+        grid-template-columns: repeat(3,1fr);
+    }
+
+    .menu{
+        grid-column: 3/4;
+    }
+}
+
+@media (max-width: 725px){
+
+    .point{
+        padding-bottom: 6%;
+    }
+}

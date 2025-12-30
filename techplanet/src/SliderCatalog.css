@@ -1,0 +1,54 @@
+.goodsSliderContainer {
+    display: grid;
+    width: 90vw;
+    justify-self: center;
+    /* grid-template-columns: repeat(5, 1fr); */
+    /* grid-gap: 10px;
+    justify-content: center;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    overflow: hidden;*/
+} 
+
+.slick-slider{
+    width: 90vw;
+}
+
+.slick-track{
+    gap: 5px
+}
+
+.slick-slide > div {
+    margin: 0 10px; /* Добавляем горизонтальные отступы 10px */
+  }
+
+  .slick-slide a{
+    display: grid;
+  }
+
+  .itemContainerDad div{
+    /* display: grid;
+    justify-content: center; */
+    /* text-align: center; */
+    margin: 0 auto;
+  }
+
+  /* .slick-slide div .itemContainer{
+    background-color: #fff;
+  } */
+
+
+@media (min-width: 820px) and (max-width: 945px){
+
+    .slick-slide img{
+        width: 90%;
+        justify-self: center;
+    }
+}
+
+@media (min-width: 430px) and (max-width: 660px){
+  
+  .slick-slide .itemContainer{
+    width: 70%;
+  }
+}

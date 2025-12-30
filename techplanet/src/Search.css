@@ -1,0 +1,6 @@
+.searchContainer{
+    display: grid;
+    justify-content: center;
+    background-color: black;
+    align-content: center;
+}
