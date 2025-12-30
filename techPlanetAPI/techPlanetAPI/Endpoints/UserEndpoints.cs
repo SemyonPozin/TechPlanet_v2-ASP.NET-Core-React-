@@ -15,12 +15,12 @@ namespace techPlanetAPI.Endpoints
             var users = app.MapGroup("Users");
 
             users.MapGet("{id:int}", GetById);
-            users.MapPut("", Update);
+            users.MapPut("{id:int}", Update);
             users.MapPost("", Add);
             return app;
         }
 
-        public static async Task<IResult> GetById([FromQuery]int id, [FromServices] IRepository<User> repo)
+        public static async Task<IResult> GetById([FromRoute]int id, [FromServices] IRepository<User> repo)
         {
             var user = await ((UsersRepository)repo).GetByIdAsync(id);
             if (user is null)

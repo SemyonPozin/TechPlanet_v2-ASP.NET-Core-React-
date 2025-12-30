@@ -1,4 +1,3 @@
-
 import "./App.css";
 import Header from "./Header.js";
 import Footer from "./Footer.js";
@@ -30,19 +29,23 @@ export const getUID = () => {
 };
 
 export default function App() {
-  useInitUserStatus(); //кастомный хук
+  // useInitUserStatus(); //кастомный хук
 
   const dispatch = useDispatch();
   const [fetching, setFetching] = useState(false);
 
   const fetchGoods = async () => {
     try {
-      const snapshot = await get(query(ref(getDatabase(), `goods`)));
-      if (snapshot.exists()) {
-        dispatch(setGoods(snapshot.val()));
-      } else {
-        console.log("База данных пуста.");
-      }
+      // const snapshot = await get(query(ref(getDatabase(), `goods`)));
+      // if (snapshot.exists()) {
+      //   dispatch(setGoods(snapshot.val()));
+      // } else {
+      //   console.log("База данных пуста.");
+      // }
+      let res = (await fetch("https://localhost:7046/Products"));
+      let goods = await res.json();
+      console.log(goods)
+      dispatch(setGoods(goods));
     } catch (error) {
       console.error("Ошибка при получении данных базы данных:", error);
     }
@@ -69,11 +72,11 @@ export default function App() {
   };
 
   async function fetchAll() {
-    const uid = getUID();
+    // const uid = getUID();
     setFetching(true);
     await fetchGoods();
     // if (!!uid) 
-      await fetchBean(uid);
+      // await fetchBean(uid);
     // else console.log("net");
     setFetching(false);
   }
