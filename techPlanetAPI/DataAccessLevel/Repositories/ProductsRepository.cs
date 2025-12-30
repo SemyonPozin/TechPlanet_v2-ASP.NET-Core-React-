@@ -82,5 +82,8 @@ namespace DataAccessLevel.Repositories
                 return false;
             }
         }
+
+        public async Task<List<Product>> GetInRange(int start, int end) =>
+            await _context.Products.Skip(start).Take(end - start + 1).ToListAsync();
     }
 }

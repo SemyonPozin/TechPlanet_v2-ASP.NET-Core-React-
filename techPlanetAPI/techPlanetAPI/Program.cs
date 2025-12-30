@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using techPlanetAPI.Configuration;
+using techPlanetAPI.Endpoints;
 
 internal class Program
 {
@@ -36,11 +37,12 @@ internal class Program
         builder.Services.AddScoped<IRepository<Order>, OrdersRepository>();
 
         var app = builder.Build();
-        app.MapGet("/", async ([FromServices]IRepository<Product> repo) =>
-        {
-            
-            return await repo.GetAllAsync();//.Wait();
-        });
+
+        OrderEndpoints.MapOrderEndpoints(app);
+        UserEndpoints.MapUserEndpoints(app);
+        ProductEndpoints.MapProductEndpoints(app);
+
+        app.MapGet("/", async ([FromServices]IRepository<Product> repo) => "Hello world");
 
         app.Run();
     }

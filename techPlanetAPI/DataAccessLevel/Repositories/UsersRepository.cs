@@ -47,10 +47,8 @@ namespace DataAccessLevel.Repositories
             }
         }
 
-        public async Task<List<User>> GetAllAsync()
-        {
-            return await _context.Users.AsNoTracking().ToListAsync();
-        }
+        public async Task<List<User>> GetAllAsync() =>
+            await _context.Users.AsNoTracking().ToListAsync();
 
         public async Task<bool> UpdateAsync(int Id, User entity)
         {
@@ -74,5 +72,8 @@ namespace DataAccessLevel.Repositories
                 return false;
             }
         }
+
+        public async Task<User?> GetByIdAsync(int Id) =>
+            await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == Id);
     }
 }

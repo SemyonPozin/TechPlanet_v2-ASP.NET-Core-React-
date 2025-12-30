@@ -75,6 +75,9 @@ namespace DataAccessLevel.Repositories
                 return false;
             }
         }
+
+        public async Task<List<Order>> GetByUserId(int userId) =>
+            await _context.Orders.Where(o => o.UserId == userId).AsNoTracking().ToListAsync();  
     }
 
 
