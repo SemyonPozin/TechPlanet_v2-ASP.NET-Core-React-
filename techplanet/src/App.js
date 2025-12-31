@@ -18,6 +18,7 @@ import { auth } from "./firebase.js";
 import { setBean } from "./store/BeanSlice.js";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import { CategorySharp, Description } from "@mui/icons-material";
 
 export const getUID = () => {
   try {
@@ -33,7 +34,8 @@ export default function App() {
 
   const dispatch = useDispatch();
   const [fetching, setFetching] = useState(false);
-
+  let goods = useSelector(state => state.goods.goods);
+  
   const fetchGoods = async () => {
     try {
       // const snapshot = await get(query(ref(getDatabase(), `goods`)));
@@ -42,7 +44,7 @@ export default function App() {
       // } else {
       //   console.log("База данных пуста.");
       // }
-      let res = (await fetch("https://localhost:7046/Products"));
+      let res = await fetch("https://localhost:7046/Products");
       let goods = await res.json();
       console.log(goods)
       dispatch(setGoods(goods));
@@ -71,9 +73,54 @@ export default function App() {
     }
   };
 
+  async function postGoods() {
+    try{
+    console.log(goods);
+    let arr = [];
+    let tempObj;
+    let tempCharacteristics;
+
+    goods.map(i => {
+      tempCharacteristics = []
+      console.log(i.charactertics);
+      i.charactertics.map(char => {
+        tempCharacteristics.push({Name: char.name, Description: char.desc})
+      });
+      tempObj = {
+        Name: i.name,
+        Brand: i.brend,
+        Price: i.price,
+        Img: i.img,
+        IsNew: i.new,
+        Discount: i.discount,
+        CountToBuy: i.countToBuy,
+        Charactertics: tempCharacteristics,//null,
+        Description: i.description ,
+        Category: i.category,
+        Orders: null
+      };
+      arr.push(tempObj);
+      
+    })
+    
+    let headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    await fetch("https://localhost:7046/Products", {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(arr)
+      }
+    )
+
+    } catch(err){
+      console.log(err.message)
+    }
+  }
+
   async function fetchAll() {
     // const uid = getUID();
     setFetching(true);
+    // await postGoods();
     await fetchGoods();
     // if (!!uid) 
       // await fetchBean(uid);

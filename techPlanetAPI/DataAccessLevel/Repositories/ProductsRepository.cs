@@ -31,6 +31,21 @@ namespace DataAccessLevel.Repositories
             }
         }
 
+        public async Task<bool> AddRangeAsync(List<Product> entity)
+        {
+            try
+            {
+                await _context.Products.AddRangeAsync(entity);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
         public async Task<bool> DeleteAsync(int Id)
         {
             try

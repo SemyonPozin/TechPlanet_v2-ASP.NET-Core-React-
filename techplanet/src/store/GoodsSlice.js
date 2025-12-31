@@ -246,7 +246,7 @@ import { createSlice } from "@reduxjs/toolkit";
 //       discount: 10,
 //       countToBuy: 1,
 //       category: "phones",
-//       charactertics: "",
+//       charactertics: [],
 //       id: Math.floor(Math.random() * 1000)+"g"+Math.floor(Math.random() * 1000),
 //       description: "Доступен в 8 (4+4) ядерном исполнении с тактовой частотой процессора 2 800 МГц и поддержкой сим-карт формата Nano-sim."+
 // +"Также  устройство обладает ярким экраном в 6.67 дюйма с разрешением 1080x2400, и двумя камерами 50 Мп и 13 Мп, которые порадуют качественными фото и видео. Быстрый процессор Qualcomm Snapdragon 685  и графический ускоритель Adreno 610 позволят решать любые задачи пользователя.",
@@ -284,7 +284,6 @@ import { createSlice } from "@reduxjs/toolkit";
 //       discount: 0,
 //       countToBuy: 1,
 //       category: "phones",
-
 //       charactertics: [{name: "Разрешение экрана", desc: "1080x2400"}, {name: "Встроенная память", desc: "128 ГБ"}, {name: "Камера", desc: "50 Мп"}, {name: "Операционная система", desc: "Android"}],
 //       id: Math.floor(Math.random() * 1000)+"g"+Math.floor(Math.random() * 1000),
 //       key: c++,
@@ -418,7 +417,6 @@ import { createSlice } from "@reduxjs/toolkit";
 //       discount: 0,
 //       countToBuy: 1,
 //       category: "headphones",
-
 //       charactertics: [{name: "Тип интерфейса", desc: "bluetooth"}, {name: "ударопрочность", desc: "IP54"}, {name: "Управление наушниками", desc: "сенсорное"}, {name: "Микрофон", desc: "встроенный в корпус"}],
 //       id: Math.floor(Math.random() * 1000)+"g"+Math.floor(Math.random() * 1000),
 //       key: c++,

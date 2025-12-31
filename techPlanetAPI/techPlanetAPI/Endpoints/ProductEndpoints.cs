@@ -16,7 +16,7 @@ namespace techPlanetAPI.Endpoints
             products.MapGet("/Length/filters", GetLengthWithFilters);
             products.MapGet("/{start:int}-{end:int}", GetRange);
             products.MapGet("/{start:int}-{end:int}/filters", GetRangeWithFilters);
-            products.MapPost("", Add);
+            products.MapPost("", AddRange);
 
             return app;
         }
@@ -50,9 +50,19 @@ namespace techPlanetAPI.Endpoints
             var list = await repo.GetAllAsync();
             return list.Count;
         }
-        public static async Task<Results<Ok, BadRequest>> Add([FromBody] Product order, [FromServices] IRepository<Product> repo)
+        public static async Task<Results<Ok, BadRequest>> Add([FromBody] Product product, [FromServices] IRepository<Product> repo)
         {
-            if (await repo.AddAsync(order))
+            if (await repo.AddAsync(product))
+                return TypedResults.Ok();
+            else return TypedResults.BadRequest();
+        }
+
+        public static async Task<Results<Ok, BadRequest>> AddRange([FromBody] List<Product> products, [FromServices] IRepository<Product> repo)
+        {
+            //Console.WriteLine(products);
+            //Console.WriteLine(products[0]);
+            //Console.WriteLine(products[0].Charactertics[0].Name);
+            if (await ((ProductsRepository)repo).AddRangeAsync(products))
                 return TypedResults.Ok();
             else return TypedResults.BadRequest();
         }
@@ -86,14 +96,14 @@ namespace techPlanetAPI.Endpoints
                 return TypedResults.Ok(filteredList);
             else return TypedResults.NotFound();
         }
-        //public static async Task<Results<Ok, BadRequest>> Update([FromBody] Order order, [FromRoute] int id, [FromServices] IRepository<Order> repo)
+        //public static async Task<Results<Ok, BadRequest>> Update([FromBody] product product, [FromRoute] int id, [FromServices] IRepository<product> repo)
         //{
-        //    if (await repo.UpdateAsync(id, order))
+        //    if (await repo.UpdateAsync(id, product))
         //        return TypedResults.Ok();
         //    else return TypedResults.BadRequest();
         //}
 
-        //public static async Task<Results<Ok, BadRequest>> Delete([FromRoute] int id, [FromServices] IRepository<Order> repo)
+        //public static async Task<Results<Ok, BadRequest>> Delete([FromRoute] int id, [FromServices] IRepository<product> repo)
         //{
         //    if (await repo.DeleteAsync(id))
         //        return TypedResults.Ok();

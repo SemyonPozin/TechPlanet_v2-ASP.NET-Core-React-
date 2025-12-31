@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Xml.Linq;
 using techPlanetAPI.Configuration;
 using techPlanetAPI.Endpoints;
@@ -59,22 +60,24 @@ internal class Program
         app.MapGet("/", async ([FromServices]IRepository<Product> repo) =>
         {
             var products = await repo.GetAllAsync();
-            if (products.Count == 0)
-            {
-                await repo.AddAsync(new Product()
-                {
-                    Name = "Apple iPhone 15 Pro 128GB",
-                    Brand = "Apple",
-                    Price = 4599,
-                    Img = "https://alloplus.by/upload/iblock/05b/f08cdopkaoi5smbsxdl80wpqqb1vuywr.jpg",
-                    IsNew = true,
-                    Discount = 0,
-                    CountToBuy = 1,
-                    Category = "phones",
-                    Description = "ewew",
-                    Charactertics = new List<ProductCharacteristics>(){ new ProductCharacteristics() { Description = "dv", Name = "ds" } }
-                });
-            }
+            //if (products.Count == 0)
+            //{
+                //await repo.AddAsync(new Product()
+                //{
+                //    Name = "Apple iPhone 15 Pro 128GB",
+                //    Brand = "Apple",
+                //    Price = 4599,
+                //    Img = "https://alloplus.by/upload/iblock/05b/f08cdopkaoi5smbsxdl80wpqqb1vuywr.jpg",
+                //    IsNew = true,
+                //    Discount = 0,
+                //    CountToBuy = 1,
+                //    Category = "phones",
+                //    Description = "ewew",
+                //    Charactertics = new List<ProductCharacteristics>(){ new ProductCharacteristics() { Description = "dv", Name = "ds" } }
+                //});
+               
+            //}
+            return JsonSerializer.Serialize(products);
         });
 
         app.Run();
