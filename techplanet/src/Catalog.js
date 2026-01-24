@@ -60,6 +60,7 @@ export default function Catalog({
     setCurrPage(num);
     window.scrollTo({ top: 0, behavior: "instant" });
   };
+
   const dispatch = useDispatch();
   const [filterObject, setFilterObject] = useState({
     brand: null,
@@ -68,7 +69,10 @@ export default function Catalog({
     category: null,
     request: ""
   });
-  // console.log(bean)
+  
+  useEffect(() => {
+    dispatch(reloadGoods(goods));
+  }, [goods])
 
   if (priceValue === undefined) priceValue = [1, 5000];
   if (request === undefined) request = "";
