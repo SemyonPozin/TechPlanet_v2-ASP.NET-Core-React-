@@ -1,7 +1,7 @@
 import "./Catalog.css";
 import { useDispatch, useSelector } from "react-redux";
 import { addToBean } from "./store/BeanSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./store/GoodsSlice";
 import { useParams } from "react-router-dom";
 import Stack from "@mui/material/Stack";
@@ -11,38 +11,123 @@ import { getGoods } from "./Selectors/getGoods";
 import { Link } from "react-router-dom";
 import { getDatabase, ref, set } from "firebase/database";
 import { auth } from "./firebase";
+import { setGoods } from "./store/GoodsSlice";
+import Preloader from "./Preloader";
 
 const paginationPerPage = 12;
 
 export default function Catalog({
   request,
   priceValue,
-  brendValue,
+  brandValue,
   categoryValue,
 }) {
-  const goods = useSelector(getGoods);
+  const apiUrl = process.env.REACT_APP_API_URL;
+  let [goods, setGoods] = useState([]);// = useSelector(getGoods);
   const bean = useSelector((state) => state.bean.bean);
   const authorized = useSelector((state) => state.authorized.authorized);
+  const [loading, setLoading] = useState(true);
+  const [length, setLength] = useState(0);
+  let firstRender = useRef(true);
   const [currPage, setCurrPage] = useState(1);
   let lastItemIndex = currPage * paginationPerPage;
   let firstItemIndex = lastItemIndex - paginationPerPage;
-  const changePage = (e, num) => {
+
+  const changePage = async (e, num) => {
+    let reqStr = `${apiUrl}/Products/filters?`;
+    if(filterObject.brand != null && filterObject.brand != "all")
+      reqStr+=`&brand=${filterObject.brand}`;
+
+    if(filterObject.minPrice && filterObject.minPrice != 0)
+      reqStr += `&minPrice=${filterObject.minPrice}`;
+    
+    if(filterObject.maxPrice)
+      reqStr += `&maxPrice=${filterObject.maxPrice}`;
+
+    if(filterObject.category && filterObject.category != "all")
+      reqStr += `&category=${filterObject.category}`;
+
+    if(filterObject.request)
+      reqStr += `&request=${filterObject.request}`;
+
+    reqStr += `&pageNum=${num}&pageSize=${paginationPerPage}`;
+
+    console.log(reqStr);
+
+    let res = await fetch(reqStr);
+    let products = await res.json();
+    setGoods(products)
     setCurrPage(num);
     window.scrollTo({ top: 0, behavior: "instant" });
   };
   const dispatch = useDispatch();
-  console.log(bean)
+  const [filterObject, setFilterObject] = useState({
+    brand: null,
+    minPrice: 0,
+    maxPrice: null,
+    category: null,
+    request: ""
+  });
+  // console.log(bean)
 
   if (priceValue === undefined) priceValue = [1, 5000];
   if (request === undefined) request = "";
 
-  const { brend, category } = useParams();
-  if (brend !== undefined) brendValue = brend;
+  const { brand, category } = useParams();
+  if (brand !== undefined) brandValue = brand;
   if (category !== undefined) categoryValue = category;
 
   useEffect(() => {
+    let newFilterObject = {};
+    console.log(request + " " + categoryValue + " " + brandValue + " " + priceValue)
+    newFilterObject.request = request;
+    newFilterObject.category = categoryValue;
+    newFilterObject.brand = brandValue;
+    newFilterObject.minPrice = priceValue[0];
+    newFilterObject.maxPrice = priceValue[1];
+
+    // if(categoryValue)
+    //   filterObject.category = categoryValue;
+
+    // if(brandValue)
+    //   filterObject.brand = brandValue;
+
+    // filterObject.minPrice = priceValue[0];
+    // filterObject.maxPrice = priceValue[1];
+
+    setFilterObject(newFilterObject);
+
     changePage(null, 1);
-  }, [request, priceValue, brendValue, categoryValue]);
+  }, [request, priceValue, brandValue, categoryValue]);
+
+
+  useEffect(() => {
+  async function loadLength(){
+    try{
+      let res = await fetch(`${apiUrl}/Products/Length`);
+      let length = await res.json();
+      // console.log(length)
+      setLength(length);
+    } catch(e){
+      console.log(e.message);
+      return;
+    }
+  }
+
+  async function load() {
+      try{
+        let res = await fetch(`${apiUrl}/Products/filters?pageNum=${currPage}&pageSize=${paginationPerPage}`);
+        let products = await res.json();
+        setGoods(products);
+        setLoading(false);
+      } catch(err){
+        return;
+      }
+  }
+
+    loadLength();
+    load();
+  }, [])
 
   useEffect(()=>{
     if(!!authorized){
@@ -85,28 +170,28 @@ export default function Catalog({
     // await set(oRef, [...bean, item]);//temp
   };
 
-  let chosenGoods = new Array();
-  goods.map((item) => {
-    if (
-      item.price >= priceValue[0] &&
-      item.price <= priceValue[1] &&
-      (item.category === categoryValue || categoryValue === "all") &&
-      (item.brend === brendValue || brendValue === "all") &&
-      (item.name.toLowerCase().includes(request.toLowerCase()) ||
-        !request ||
-        request === "")
-    )
-      chosenGoods.push(item);
-  });
-  const filteredGoods = chosenGoods;
-  chosenGoods = chosenGoods.slice(firstItemIndex, lastItemIndex);
-  dispatch(reloadGoods(chosenGoods));
+  // let chosenGoods = new Array();
+  // goods.map((item) => {
+  //   if (
+  //     item.price >= priceValue[0] &&
+  //     item.price <= priceValue[1] &&
+  //     (item.category === categoryValue || categoryValue === "all") &&
+  //     (item.brand === brandValue || brandValue === "all") &&
+  //     (item.name.toLowerCase().includes(request.toLowerCase()) ||
+  //       !request ||
+  //       request === "")
+  //   )
+  //     chosenGoods.push(item);
+  // });
+  // const filteredGoods = chosenGoods;
+  // chosenGoods = chosenGoods.slice(firstItemIndex, lastItemIndex);
+  // dispatch(reloadGoods(chosenGoods));
 
-  const pagesCount = Math.ceil(filteredGoods.length / paginationPerPage);
+  const pagesCount = Math.ceil(length / paginationPerPage);
 
-  return (
+  if (!loading){ return (
     <div className="goodsContainer">
-      {chosenGoods.map((item) => (
+      {goods.map((item) => (
         <div className="itemContainer" key={item.id}>
           <div className="absol">
             {item.new && <div className="new">NEW!</div>}
@@ -151,10 +236,10 @@ export default function Catalog({
           </div>
         </div>
       ))}
-      {chosenGoods.length === 0 && (
+      {length === 0 && (
         <div className="notFound">Ничего не найдено!</div>
       )}
-      {filteredGoods.length>12 && (
+      {length>12 && (
         <Pagination
           count={pagesCount}
           defaultPage={1}
@@ -163,5 +248,7 @@ export default function Catalog({
         ></Pagination>
       )}
     </div>
-  );
+  )} else { 
+    return <Preloader width = "100vw" height="10vh"/>
+  }
 }

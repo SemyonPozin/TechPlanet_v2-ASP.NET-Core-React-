@@ -104,16 +104,16 @@ export default function ProductPage() {
   let stringsArr;
   if (!fetching) stringsArr = createStrings(windowWidth, goodData);
 
-  let brendArr=[];
+  let brandArr=[];
 
   goods.map((item)=>{
-      if(item.brend===goodData.brend)
-        brendArr.push(item);
-      if(brendArr.length===2)
+      if(item.brand===goodData.brand)
+        brandArr.push(item);
+      if(brandArr.length===2)
         return;
   })
 
-  console.log(brendArr)
+  console.log(brandArr)
 
   if (!!goodData) {
     return (
@@ -179,7 +179,7 @@ export default function ProductPage() {
             </table>
           </div>
         </div>
-        {(brendArr.length>1) && <div style={{ display: "grid", padding: "20px 0px" }}>
+        {(brandArr.length>1) && <div style={{ display: "grid", padding: "20px 0px" }}>
           <div
             className="name"
             style={{
@@ -192,7 +192,7 @@ export default function ProductPage() {
             Также от этого производителя
           </div>
            <SliderCatalog
-            filter={{ prop: "brend", filter: goodData.brend }}
+            filter={{ prop: "brand", filter: goodData.brand }}
             goods={goods}
           ></SliderCatalog>
         </div>}

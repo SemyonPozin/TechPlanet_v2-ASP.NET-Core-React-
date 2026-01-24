@@ -11,27 +11,27 @@ import Radio from "@mui/material/Radio";
 export default function Filters({ request }) {
   const [showPriceFilter, setShowPriceFilter] = useState(false);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
-  const [showBrendFilter, setShowBrendFilter] = useState(false);
+  const [showbrandFilter, setShowbrandFilter] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [brendFilter, setBrendFilter] = useState("all");
+  const [brandFilter, setbrandFilter] = useState("all");
 
   const goods = useSelector((state) => state.goods.goods);
   const priceFilter = useSelector((state) => state.pricefilt.priceFilter);
 
-  const brendsCollection = useMemo(() => {
+  const brandsCollection = useMemo(() => {
     //оптимизация c помощью хука useMemo
-    let brendsCollection = new Set();
+    let brandsCollection = new Set();
 
     for (let i = 0; i < goods.length; i++) {
-      brendsCollection.add(goods[i].brend);
+      brandsCollection.add(goods[i].brand);
     }
 
-    return (brendsCollection = Array.from(brendsCollection));
+    return (brandsCollection = Array.from(brandsCollection));
   }, [goods]);
 
   // console.log('price: '+priceFilter)
   // console.log('category: '+categoryFilter)
-  // console.log('brend: '+brendFilter)
+  // console.log('brand: '+brandFilter)
   // console.log('request: '+request)
 
   return (
@@ -42,7 +42,7 @@ export default function Filters({ request }) {
             onClick={() => {
               setShowPriceFilter(!showPriceFilter);
               setShowCategoryFilter(false);
-              setShowBrendFilter(false);
+              setShowbrandFilter(false);
             }}
             className="filtName"
           >
@@ -57,7 +57,7 @@ export default function Filters({ request }) {
             onClick={() => {
               setShowCategoryFilter(!showCategoryFilter);
               setShowPriceFilter(false);
-              setShowBrendFilter(false);
+              setShowbrandFilter(false);
             }}
             className="filtName"
           >
@@ -123,35 +123,35 @@ export default function Filters({ request }) {
         <div className="filter">
           <div
             onClick={() => {
-              setShowBrendFilter(!showBrendFilter);
+              setShowbrandFilter(!showbrandFilter);
               setShowCategoryFilter(false);
               setShowPriceFilter(false);
             }}
             className="filtName"
           >
-            Бренд {!showBrendFilter ? "▼" : "▲"}
+            Бренд {!showbrandFilter ? "▼" : "▲"}
           </div>
-          {showBrendFilter && (
-            <div className="brendFilter">
-              <div className="brendsList">
-                {brendsCollection.map((item) => (
+          {showbrandFilter && (
+            <div className="brandFilter">
+              <div className="brandsList">
+                {brandsCollection.map((item) => (
                   <div>
                     {item}
                     <input
                   type="radio"
-                  checked={brendFilter === item}
-                  onChange={() => setBrendFilter(item)}
+                  checked={brandFilter === item}
+                  onChange={() => setbrandFilter(item)}
                 ></input>
                     {/* <Radio
-                      checked={brendFilter === item}
-                      onChange={() => setBrendFilter(item)}
+                      checked={brandFilter === item}
+                      onChange={() => setbrandFilter(item)}
                       size="small"
                     /> */}
                   </div>
                 ))}
               </div>
               <div
-                onClick={() => setBrendFilter("all")}
+                onClick={() => setbrandFilter("all")}
                 className="clearCategory"
               >
                 Сбросить
@@ -164,7 +164,7 @@ export default function Filters({ request }) {
         request={request}
         priceValue={priceFilter}
         categoryValue={categoryFilter}
-        brendValue={brendFilter}
+        brandValue={brandFilter}
       ></Catalog>
     </div>
   );

@@ -51,22 +51,22 @@ export default function Footer() {
             Телефоны
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Apple/phones`}>
             Apple
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Samsung/phones`}>
             Samsung
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Honor/phones`}>
             Honor
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Xiaomi/phones`}>
             Xiaomi
           </Link>
@@ -78,22 +78,22 @@ export default function Footer() {
             Планшеты
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Lenovo/tablets`}>
             Lenovo
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Apple/tablets`}>
             Apple
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Honor/tablets`}>
             Honor
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Samsung/tablets`}>
             Samsung
           </Link>
@@ -105,22 +105,22 @@ export default function Footer() {
             Наушники
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Marshall/headphones`}>
             Marshall
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Hoco/headphones`}>
             Hoco
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Apple/headphones`}>
             Apple
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Phillips/headphones`}>
             Phillips
           </Link>
@@ -132,12 +132,12 @@ export default function Footer() {
             Аксессуары
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Xiaomi/accessories`}>
             Xiaomi
           </Link>
         </div>
-        <div className="brend">
+        <div className="brand">
           <Link className="link" to={`redactedCatalog/Apple/accessories`}>
             Apple
           </Link>

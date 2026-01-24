@@ -7,20 +7,23 @@ import Slider from "react-slick";
 import { Margin } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
-export default function SliderCatalog({ filter, goods }) {
+export default function SliderCatalog({ goods }) {
 
-  let chosenGoods = new Array();
-  goods.map((item) => {
-    if(typeof filter.filter ==="string"){
-      if (filter.filter === item[filter.prop]) chosenGoods.push(item);
-    }
-    else{
-      if (filter.filter !== !item[filter.prop]) chosenGoods.push(item);
-    }
-  });
+  // let chosenGoods = new Array();
+  // goods.map((item) => {
+  //   if(typeof filter.filter ==="string"){
+  //     if (filter.filter === item[filter.prop]) chosenGoods.push(item);
+  //   }
+  //   else{
+  //     if (filter.filter !== !item[filter.prop]) chosenGoods.push(item);
+  //   }
+  // });
 
 //   console.log(chosenGoods);
-let slidesCount=chosenGoods.length;
+
+// console.log(goods)
+
+let slidesCount=goods.length;
 
   let settings = {
     dots: false,
@@ -65,11 +68,11 @@ let slidesCount=chosenGoods.length;
   return (
     <div className="goodsSliderContainer">
       <Slider {...settings} >
-        {chosenGoods.map((item) => (
+        {goods.map((item) => (
         <div className="itemContainerDad" key={item.id}>
           <div className="itemContainer">
             <div className="absol">
-              {item.new && <div className="new">NEW!</div>}
+              {item.isNew && <div className="new">NEW!</div>}
               {item.discount !== 0 && (
                 <div className="discount"> -{item.discount}%</div>
               )}

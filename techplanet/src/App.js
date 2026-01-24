@@ -4,7 +4,7 @@ import Footer from "./Footer.js";
 import { Search } from "./Search.js";
 import Bean from "./bean.js";
 import MainPage from "./mainPage.js";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Routes, Route } from "react-router-dom";
 import Catalog from "./Catalog.js";
 import About from "./About.js";
@@ -19,6 +19,7 @@ import { setBean } from "./store/BeanSlice.js";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { CategorySharp, Description } from "@mui/icons-material";
+import Preloader from "./Preloader.js";
 
 export const getUID = () => {
   try {
@@ -35,6 +36,8 @@ export default function App() {
   const dispatch = useDispatch();
   const [fetching, setFetching] = useState(false);
   let goods = useSelector(state => state.goods.goods);
+  let firstRender = useRef(true);
+  let apiUrl = process.env.REACT_APP_API_URL;
   
   const fetchGoods = async () => {
     try {
@@ -44,7 +47,7 @@ export default function App() {
       // } else {
       //   console.log("База данных пуста.");
       // }
-      let res = await fetch("https://localhost:7046/Products");
+      let res = await fetch(`${apiUrl}/Products`);
       let goods = await res.json();
       console.log(goods)
       dispatch(setGoods(goods));
@@ -84,20 +87,20 @@ export default function App() {
       tempCharacteristics = []
       console.log(i.charactertics);
       i.charactertics.map(char => {
-        tempCharacteristics.push({Name: char.name, Description: char.desc})
+        tempCharacteristics.push({name: char.name, description: char.desc})
       });
       tempObj = {
-        Name: i.name,
-        Brand: i.brend,
-        Price: i.price,
-        Img: i.img,
-        IsNew: i.new,
-        Discount: i.discount,
-        CountToBuy: i.countToBuy,
-        Charactertics: tempCharacteristics,//null,
-        Description: i.description ,
-        Category: i.category,
-        Orders: null
+        name: i.name,
+        Brand: i.brand,
+        price: i.price,
+        img: i.img,
+        isNew: i.new,
+        discount: i.discount,
+        countToBuy: i.countToBuy,
+        charactertics: tempCharacteristics,//null,
+        description: i.description ,
+        category: i.category,
+        orders: null
       };
       arr.push(tempObj);
       
@@ -119,18 +122,22 @@ export default function App() {
 
   async function fetchAll() {
     // const uid = getUID();
-    setFetching(true);
-    // await postGoods();
-    await fetchGoods();
-    // if (!!uid) 
+    if(firstRender){
+      setFetching(true);
+    
+      // await postGoods();
+      // await fetchGoods();
+      // if (!!uid) 
       // await fetchBean(uid);
-    // else console.log("net");
-    setFetching(false);
+      // else console.log("net");
+      setFetching(false);
+      firstRender = false;
+    }
   }
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  // useEffect(() => {
+  //   fetchAll();
+  // }, []);
 
   // const goods = useSelector((state) => state.goods.goods);
 
@@ -160,7 +167,7 @@ export default function App() {
             <Route path="/basket" element={<Bean />}></Route>
             <Route path="/catalog" element={<Search />}></Route>
             <Route
-              path="/redactedCatalog/:brend/:category"
+              path="/redactedCatalog/:brand/:category"
               element={<Catalog />}
             ></Route>
             <Route path="/productPage/:key" element={<ProductPage />}></Route>
@@ -170,17 +177,7 @@ export default function App() {
           <Footer></Footer>
         </>
       ) : (
-        <Box
-          sx={{
-            display: "flex",
-            width: "100vw",
-            height: "100vh",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <CircularProgress />
-        </Box>
+        <Preloader width = "100vw" height="100vh"/>
       )}
     </div>
   );
