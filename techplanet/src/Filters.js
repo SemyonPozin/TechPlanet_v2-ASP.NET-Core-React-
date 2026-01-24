@@ -14,25 +14,30 @@ export default function Filters({ request }) {
   const [showbrandFilter, setShowbrandFilter] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [brandFilter, setbrandFilter] = useState("all");
-
-  const goods = useSelector((state) => state.goods.goods);
+  const apiUrl = process.env.REACT_APP_API_URL;
+  let [goods, setGoods] = useState([]);//useSelector((state) => state.goods.goods);
   const priceFilter = useSelector((state) => state.pricefilt.priceFilter);
 
+  console.log(categoryFilter);
+  
+  useEffect(() => {
+    async function loadProducts() {
+      let res = await fetch(`${apiUrl}/Products`);
+      let temp = await res.json();
+      setGoods(temp);
+    }
+
+    loadProducts();
+  }, [])
+
   const brandsCollection = useMemo(() => {
-    //оптимизация c помощью хука useMemo
     let brandsCollection = new Set();
 
-    for (let i = 0; i < goods.length; i++) {
+    for (let i = 0; i < goods.length; i++) 
       brandsCollection.add(goods[i].brand);
-    }
 
     return (brandsCollection = Array.from(brandsCollection));
   }, [goods]);
-
-  // console.log('price: '+priceFilter)
-  // console.log('category: '+categoryFilter)
-  // console.log('brand: '+brandFilter)
-  // console.log('request: '+request)
 
   return (
     <div className="filtersComponent">
@@ -193,7 +198,6 @@ export function MinimumDistanceSlider() {
         setFilter([value1[0], Math.max(newValue[1], value1[0] + minDistance)])
       );
     }
-    console.log("init" + value1);
   };
 
   return (

@@ -1,7 +1,7 @@
 import "./Catalog.css";
 import { useDispatch, useSelector } from "react-redux";
 import { addToBean } from "./store/BeanSlice";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, memo } from "react";
 import "./store/GoodsSlice";
 import { useParams } from "react-router-dom";
 import Stack from "@mui/material/Stack";
@@ -16,7 +16,7 @@ import Preloader from "./Preloader";
 
 const paginationPerPage = 12;
 
-export default function Catalog({
+export default memo(function Catalog({
   request,
   priceValue,
   brandValue,
@@ -33,6 +33,8 @@ export default function Catalog({
   let lastItemIndex = currPage * paginationPerPage;
   let firstItemIndex = lastItemIndex - paginationPerPage;
 
+  console.log("@E")
+
   const changePage = async (e, num) => {
     let reqStr = `${apiUrl}/Products/filters?`;
     if(filterObject.brand != null && filterObject.brand != "all")
@@ -44,8 +46,12 @@ export default function Catalog({
     if(filterObject.maxPrice)
       reqStr += `&maxPrice=${filterObject.maxPrice}`;
 
-    if(filterObject.category && filterObject.category != "all")
+      console.log(filterObject)
+
+    if(filterObject.category && filterObject.category != "all"){
       reqStr += `&category=${filterObject.category}`;
+      console.log(filterObject.category)
+    }
 
     if(filterObject.request)
       reqStr += `&request=${filterObject.request}`;
@@ -56,6 +62,7 @@ export default function Catalog({
 
     let res = await fetch(reqStr);
     let products = await res.json();
+    // console.log(products);
     setGoods(products)
     setCurrPage(num);
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -90,6 +97,7 @@ export default function Catalog({
     newFilterObject.minPrice = priceValue[0];
     newFilterObject.maxPrice = priceValue[1];
 
+    console.log(newFilterObject.category);
     // if(categoryValue)
     //   filterObject.category = categoryValue;
 
@@ -100,10 +108,11 @@ export default function Catalog({
     // filterObject.maxPrice = priceValue[1];
 
     setFilterObject(newFilterObject);
-
-    changePage(null, 1);
   }, [request, priceValue, brandValue, categoryValue]);
 
+  useEffect(() => {
+    changePage(null, 1);
+  }, [filterObject]);
 
   useEffect(() => {
   async function loadLength(){
@@ -255,4 +264,4 @@ export default function Catalog({
   )} else { 
     return <Preloader width = "100vw" height="10vh"/>
   }
-}
+})
