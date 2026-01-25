@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import * as React from 'react';
 import Filters from "./Filters";
 import "./Search.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
@@ -15,6 +16,8 @@ function Search() {
 
   const [filter, setFilter] = useState(""); //состояние запроса в строке поиска
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const location = useLocation();
+  const navigate=useNavigate();
 
   useEffect(() => {
     function handleResize() {
@@ -29,6 +32,12 @@ function Search() {
     evt.preventDefault();
     // console.log(promise)
     setFilter(promise);
+  }
+
+  const handleChange = (e) => {
+    text=e.target.value;
+    if(location.pathname.includes("redacted"))
+      navigate("/catalog");
   }
 
 
@@ -49,7 +58,7 @@ function Search() {
           sx={{ ml: 1, flex: 1 }}
           placeholder="Искать"
           //inputProps={{ 'aria-label': 'search google maps' }}
-          onChange={(e)=>{text=e.target.value}}
+          onChange={(e)=>handleChange(e)}
         />
         <IconButton type="button" sx={{ p: '10px'}} aria-label="search" onClick={(e)=>request(e, text)}>
           <SearchIcon/>

@@ -168,7 +168,7 @@ export default function App() {
             <Route path="/catalog" element={<Search />}></Route>
             <Route
               path="/redactedCatalog/:brand/:category"
-              element={<Catalog />}
+              element={<Search />}
             ></Route>
             <Route path="/productPage/:key" element={<ProductPage />}></Route>
             <Route path="/about" element={<About />}></Route>
