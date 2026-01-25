@@ -34,9 +34,6 @@ export default memo(function Catalog({
   let firstItemIndex = lastItemIndex - paginationPerPage;
 
   const changePage = async (e, num) => {
-
-    console.log("change")
-
     async function loadLength(){
       try{
         let reqStr = `${apiUrl}/Products/Length/filters?`;
@@ -78,25 +75,20 @@ export default memo(function Catalog({
       if(filterObject.maxPrice)
         reqStr += `&maxPrice=${filterObject.maxPrice}`;
 
-      if(filterObject.category && filterObject.category != "all")//{
+      if(filterObject.category && filterObject.category != "all")
         reqStr += `&category=${filterObject.category}`;
-    //   console.log(filterObject.category)
-    // }
 
       if(filterObject.request)
         reqStr += `&request=${filterObject.request}`;
 
       reqStr += `&pageNum=${num}&pageSize=${paginationPerPage}`;
 
-      console.log(reqStr);
-
       let res = await fetch(reqStr);
       let products = await res.json();
-    // console.log(products);
+
       setGoods(products);
       setCurrPage(num);
       window.scrollTo({ top: 0, behavior: "instant" });
-      // return { num: num, products: products }
     }
 
     await loadLength();
@@ -133,14 +125,6 @@ export default memo(function Catalog({
     newFilterObject.maxPrice = priceValue[1];
 
     console.log(newFilterObject.category);
-    // if(categoryValue)
-    //   filterObject.category = categoryValue;
-
-    // if(brandValue)
-    //   filterObject.brand = brandValue;
-
-    // filterObject.minPrice = priceValue[0];
-    // filterObject.maxPrice = priceValue[1];
 
     setFilterObject(newFilterObject);
   }, [request, priceValue, brandValue, categoryValue]);
