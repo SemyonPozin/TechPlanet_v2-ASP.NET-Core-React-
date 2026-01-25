@@ -20,6 +20,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { CategorySharp, Description } from "@mui/icons-material";
 import Preloader from "./Preloader.js";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export const getUID = () => {
   try {
@@ -38,6 +39,7 @@ export default function App() {
   let goods = useSelector(state => state.goods.goods);
   let firstRender = useRef(true);
   let apiUrl = process.env.REACT_APP_API_URL;
+  const queryClient = new QueryClient();
   
   const fetchGoods = async () => {
     try {
@@ -158,6 +160,7 @@ export default function App() {
   // }, [goods]);
 
   return (
+    <QueryClientProvider client={queryClient}>
     <div className="App">
       {!fetching ? (
         <>
@@ -180,5 +183,6 @@ export default function App() {
         <Preloader width = "100vw" height="100vh"/>
       )}
     </div>
+    </QueryClientProvider>
   );
 }

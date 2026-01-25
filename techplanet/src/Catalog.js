@@ -13,28 +13,17 @@ import { getDatabase, ref, set } from "firebase/database";
 import { auth } from "./firebase";
 import { setGoods } from "./store/GoodsSlice";
 import Preloader from "./Preloader";
+import { useQuery } from "@tanstack/react-query";
 
 const paginationPerPage = 12;
+const apiUrl = process.env.REACT_APP_API_URL;
 
-export default memo(function Catalog({
-  request,
-  priceValue,
-  brandValue,
-  categoryValue,
-}) {
-  const apiUrl = process.env.REACT_APP_API_URL;
-  let [goods, setGoods] = useState([]);// = useSelector(getGoods);
-  const bean = useSelector((state) => state.bean.bean);
-  const authorized = useSelector((state) => state.authorized.authorized);
-  const [loading, setLoading] = useState(true);
-  const [length, setLength] = useState(0);
-  let firstRender = useRef(true);
-  const [currPage, setCurrPage] = useState(1);
-  let lastItemIndex = currPage * paginationPerPage;
-  let firstItemIndex = lastItemIndex - paginationPerPage;
+// const loadQuery = async (request) => {
+//   let res = await fetch(request);
+//   return res.json();
+// }
 
-  const changePage = async (e, num) => {
-    async function loadLength(){
+async function loadLength(filterObject){
       try{
         let reqStr = `${apiUrl}/Products/Length/filters?`;
         if(filterObject.brand != null && filterObject.brand != "all")
@@ -53,18 +42,15 @@ export default memo(function Catalog({
           reqStr += `&request=${filterObject.request}`;
 
         let res = await fetch(reqStr);
-        let length = await res.json();
-        setLength(length);
+        return res.json();
+        // setLength(length);
       } catch(e){
         console.log(e.message);
         return;
       }
-    }
+}
 
-    async function load(){
-      if(e == null)
-      num = 1;
-
+async function load(filterObject, num){
       let reqStr = `${apiUrl}/Products/filters?`;
       if(filterObject.brand != null && filterObject.brand != "all")
         reqStr+=`&brand=${filterObject.brand}`;
@@ -82,20 +68,18 @@ export default memo(function Catalog({
         reqStr += `&request=${filterObject.request}`;
 
       reqStr += `&pageNum=${num}&pageSize=${paginationPerPage}`;
-
+      
       let res = await fetch(reqStr);
-      let products = await res.json();
+      return res.json();
+}
 
-      setGoods(products);
-      setCurrPage(num);
-      window.scrollTo({ top: 0, behavior: "instant" });
-    }
-
-    await loadLength();
-    await load();
-  };
-
-  const dispatch = useDispatch();
+export default memo(function Catalog({
+  request,
+  priceValue,
+  brandValue,
+  categoryValue,
+}) {
+  const [currPage, setCurrPage] = useState(1);
   const [filterObject, setFilterObject] = useState({
     brand: null,
     minPrice: 0,
@@ -103,6 +87,29 @@ export default memo(function Catalog({
     category: null,
     request: ""
   });
+
+  const { data: length, isLoading: lengthLoading } = useQuery({
+    queryKey: ["Length", filterObject],
+    queryFn: async function(){ return await loadLength(filterObject)}
+  })
+
+  const { data: goods, isLoading: goodsLoading } = useQuery({
+    queryKey: ["products", filterObject, currPage],
+    queryFn: async function(){ return await load(filterObject, currPage)}
+  })
+  const bean = useSelector((state) => state.bean.bean);
+  const authorized = useSelector((state) => state.authorized.authorized);
+  let lastItemIndex = currPage * paginationPerPage;
+  let firstItemIndex = lastItemIndex - paginationPerPage;
+
+  const changePage = async (e, num) => {
+    if(e == null)
+      num = 1;
+    setCurrPage(num);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const dispatch = useDispatch();
   
   useEffect(() => {
     dispatch(reloadGoods(goods));
@@ -132,34 +139,6 @@ export default memo(function Catalog({
   useEffect(() => {
     changePage(null, 1);
   }, [filterObject]);
-
-  useEffect(() => {
-  async function loadLength(){
-    try{
-      let res = await fetch(`${apiUrl}/Products/Length`);
-      let length = await res.json();
-      // console.log(length)
-      setLength(length);
-    } catch(e){
-      console.log(e.message);
-      return;
-    }
-  }
-
-  async function load() {
-      try{
-        let res = await fetch(`${apiUrl}/Products/filters?pageNum=${currPage}&pageSize=${paginationPerPage}`);
-        let products = await res.json();
-        setGoods(products);
-        setLoading(false);
-      } catch(err){
-        return;
-      }
-  }
-
-    loadLength();
-    load();
-  }, [])
 
   // useEffect(()=>{
   //   if(!!authorized){
@@ -202,26 +181,11 @@ export default memo(function Catalog({
     // await set(oRef, [...bean, item]);//temp
   };
 
-  // let chosenGoods = new Array();
-  // goods.map((item) => {
-  //   if (
-  //     item.price >= priceValue[0] &&
-  //     item.price <= priceValue[1] &&
-  //     (item.category === categoryValue || categoryValue === "all") &&
-  //     (item.brand === brandValue || brandValue === "all") &&
-  //     (item.name.toLowerCase().includes(request.toLowerCase()) ||
-  //       !request ||
-  //       request === "")
-  //   )
-  //     chosenGoods.push(item);
-  // });
-  // const filteredGoods = chosenGoods;
-  // chosenGoods = chosenGoods.slice(firstItemIndex, lastItemIndex);
-  // dispatch(reloadGoods(chosenGoods));
-
   const pagesCount = Math.ceil(length / paginationPerPage);
 
-  if (!loading){ return (
+  console.log(length)
+
+  if (!(goodsLoading || lengthLoading)){ return (
     <div className="goodsContainer">
       {goods.map((item) => (
         <div className="itemContainer" key={item.id}>
