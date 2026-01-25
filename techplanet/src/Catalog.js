@@ -33,39 +33,74 @@ export default memo(function Catalog({
   let lastItemIndex = currPage * paginationPerPage;
   let firstItemIndex = lastItemIndex - paginationPerPage;
 
-  console.log("@E")
-
   const changePage = async (e, num) => {
-    let reqStr = `${apiUrl}/Products/filters?`;
-    if(filterObject.brand != null && filterObject.brand != "all")
-      reqStr+=`&brand=${filterObject.brand}`;
 
-    if(filterObject.minPrice && filterObject.minPrice != 0)
-      reqStr += `&minPrice=${filterObject.minPrice}`;
+    console.log("change")
+
+    async function loadLength(){
+      try{
+        let reqStr = `${apiUrl}/Products/Length/filters?`;
+        if(filterObject.brand != null && filterObject.brand != "all")
+          reqStr+=`&brand=${filterObject.brand}`;
+
+        if(filterObject.minPrice && filterObject.minPrice != 0)
+          reqStr += `&minPrice=${filterObject.minPrice}`;
     
-    if(filterObject.maxPrice)
-      reqStr += `&maxPrice=${filterObject.maxPrice}`;
+        if(filterObject.maxPrice)
+          reqStr += `&maxPrice=${filterObject.maxPrice}`;
 
-      console.log(filterObject)
+        if(filterObject.category && filterObject.category != "all")
+          reqStr += `&category=${filterObject.category}`;
 
-    if(filterObject.category && filterObject.category != "all"){
-      reqStr += `&category=${filterObject.category}`;
-      console.log(filterObject.category)
+        if(filterObject.request)
+          reqStr += `&request=${filterObject.request}`;
+
+        let res = await fetch(reqStr);
+        let length = await res.json();
+        setLength(length);
+      } catch(e){
+        console.log(e.message);
+        return;
+      }
     }
 
-    if(filterObject.request)
-      reqStr += `&request=${filterObject.request}`;
+    async function load(){
+      if(e == null)
+      num = 1;
 
-    reqStr += `&pageNum=${num}&pageSize=${paginationPerPage}`;
+      let reqStr = `${apiUrl}/Products/filters?`;
+      if(filterObject.brand != null && filterObject.brand != "all")
+        reqStr+=`&brand=${filterObject.brand}`;
 
-    console.log(reqStr);
+      if(filterObject.minPrice && filterObject.minPrice != 0)
+        reqStr += `&minPrice=${filterObject.minPrice}`;
+    
+      if(filterObject.maxPrice)
+        reqStr += `&maxPrice=${filterObject.maxPrice}`;
 
-    let res = await fetch(reqStr);
-    let products = await res.json();
+      if(filterObject.category && filterObject.category != "all")//{
+        reqStr += `&category=${filterObject.category}`;
+    //   console.log(filterObject.category)
+    // }
+
+      if(filterObject.request)
+        reqStr += `&request=${filterObject.request}`;
+
+      reqStr += `&pageNum=${num}&pageSize=${paginationPerPage}`;
+
+      console.log(reqStr);
+
+      let res = await fetch(reqStr);
+      let products = await res.json();
     // console.log(products);
-    setGoods(products)
-    setCurrPage(num);
-    window.scrollTo({ top: 0, behavior: "instant" });
+      setGoods(products);
+      setCurrPage(num);
+      window.scrollTo({ top: 0, behavior: "instant" });
+      // return { num: num, products: products }
+    }
+
+    await loadLength();
+    await load();
   };
 
   const dispatch = useDispatch();
@@ -142,12 +177,12 @@ export default memo(function Catalog({
     load();
   }, [])
 
-  useEffect(()=>{
-    if(!!authorized){
-      const oRef=ref(getDatabase(), `users/${auth.currentUser.uid}/basket`);
-      set(oRef, bean);
-    }
-  }, [bean])
+  // useEffect(()=>{
+  //   if(!!authorized){
+  //     const oRef=ref(getDatabase(), `users/${auth.currentUser.uid}/basket`);
+  //     set(oRef, bean);
+  //   }
+  // }, [bean])
 
   const add = async (e, item) => {
     if(!authorized){
@@ -255,6 +290,7 @@ export default memo(function Catalog({
       {length>12 && (
         <Pagination
           count={pagesCount}
+          page={currPage}
           defaultPage={1}
           boundaryCount={2}
           onChange={changePage}
