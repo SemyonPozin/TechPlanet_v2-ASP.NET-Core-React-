@@ -10,6 +10,14 @@ namespace Domain.Entities
 {
     public class User
     {
+        public User(string name, string email, string passwordHash, string phone, int roleId = 1)
+        {
+            this.Name = name;
+            this.Email = email;
+            this.PasswordHash = passwordHash;
+            this.Phone = phone;
+            this.RoleId = roleId;
+        }
         public int Id { get; set; }
         public int RoleId { get; set; }
         public string Name { get; set; }

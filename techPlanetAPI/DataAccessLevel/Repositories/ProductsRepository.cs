@@ -1,4 +1,6 @@
 ﻿using Domain.Entities;
+using Domain.Extensions;
+using Domain.Queries;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -84,7 +86,7 @@ namespace DataAccessLevel.Repositories
                     product.Category = entity.Category;
                     product.Description = entity.Description;
 
-                    if(entity.Charactertics != null && entity.Charactertics.Count > 0)
+                    if (entity.Charactertics != null && entity.Charactertics.Count > 0)
                         product.Charactertics = entity.Charactertics;
                 }
                 else throw new Exception("no such element");
@@ -98,7 +100,12 @@ namespace DataAccessLevel.Repositories
             }
         }
 
-        public async Task<List<Product>> GetInRange(int start, int end) =>
-            await _context.Products.Skip(start).Take(end - start + 1).ToListAsync();
+        public async Task<List<Product>> GetInRange(ProductSearchQuery query)
+        {
+            return await _context.Products
+                .AsQueryable()
+                .Filter(query)
+                .ToListAsync();
+        }
     }
 }

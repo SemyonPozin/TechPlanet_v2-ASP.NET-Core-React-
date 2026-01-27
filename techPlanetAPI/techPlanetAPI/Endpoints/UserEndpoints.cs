@@ -1,8 +1,10 @@
 ﻿using DataAccessLevel.Repositories;
 using Domain.Entities;
+using Domain.Queries;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using techPlanetAPI.Services;
 
 namespace techPlanetAPI.Endpoints
 {
@@ -17,6 +19,8 @@ namespace techPlanetAPI.Endpoints
             users.MapGet("{id:int}", GetById);
             users.MapPut("{id:int}", Update);
             users.MapPost("", Add);
+            users.MapPost("login", Login);
+            users.MapPost("register", Register);
             return app;
         }
 
@@ -38,6 +42,20 @@ namespace techPlanetAPI.Endpoints
             if (await repo.UpdateAsync(id, user))
                 return TypedResults.Ok();
             else return TypedResults.BadRequest();
+        }
+
+        public static async Task<IResult> Login(IUserService service, LoginUserQuery query, HttpContext context)
+        {
+            string token = await service.Login(query.Email, query.Password);
+            context.Response.Cookies.Append("oreo", token);
+            return Results.Ok();
+        }
+
+        public static async Task<IResult> Register(IUserService service, RegisterUserQuery query)
+        {
+            int role = query.RoleId ?? 1;
+            await service.Register(query.Name, query.Password, query.Email, query.Phone, role);
+            return Results.Ok();
         }
 
         //public static async Task<Results<Ok, BadRequest>> Delete([FromRoute] int id, [FromServices] IRepository<User> repo)

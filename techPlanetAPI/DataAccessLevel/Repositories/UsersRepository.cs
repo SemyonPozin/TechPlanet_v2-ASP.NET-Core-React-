@@ -75,5 +75,8 @@ namespace DataAccessLevel.Repositories
 
         public async Task<User?> GetByIdAsync(int Id) =>
             await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == Id);
+
+        public async Task<User?> GetByEmailAsync(string email) =>
+           await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
     }
 }

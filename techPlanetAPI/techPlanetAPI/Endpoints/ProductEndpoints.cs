@@ -1,7 +1,13 @@
-﻿using DataAccessLevel.Repositories;
+﻿using DataAccessLevel;
+using DataAccessLevel.Repositories;
 using Domain.Entities;
+using Domain.Queries;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace techPlanetAPI.Endpoints
 {
@@ -14,8 +20,8 @@ namespace techPlanetAPI.Endpoints
             products.MapGet("", Get);
             products.MapGet("/Length", GetLength);
             products.MapGet("/Length/filters", GetLengthWithFilters);
-            products.MapGet("/{start:int}-{end:int}", GetRange);
-            products.MapGet("/{start:int}-{end:int}/filters", GetRangeWithFilters);
+            //products.MapGet("/{start:int}-{end:int}", GetRange);
+            products.MapGet("/filters", GetRangeWithFilters);
             products.MapPost("", AddRange);
 
             return app;
@@ -28,24 +34,28 @@ namespace techPlanetAPI.Endpoints
             return Results.Ok(list);
         }
 
-        public static async Task<int> GetLength(
-            [FromQuery] string category,
-            [FromQuery] string brand,
-            [FromQuery] decimal minPrice,
-            [FromQuery] decimal maxPrice, 
+        public static async Task<int> GetLengthWithFilters(
+            //[FromQuery] string category,
+            //[FromQuery] string brand,
+            //[FromQuery] decimal minPrice,
+            //[FromQuery] decimal maxPrice,
+            [AsParameters] ProductSearchQuery query,
             [FromServices] IRepository<Product> repo)
         {
-            var list = await repo.GetAllAsync();
-            List<Product> filteredList = list.Where(p => 
-                p.Category == category &&
-                p.Brand == brand &&
-                p.Price >= minPrice &&
-                p.Price <= maxPrice
-            ).ToList();
+            //var list = await repo.GetAllAsync();
+            //List<Product> filteredList = list.Where(p => 
+            //    p.Category == category &&
+            //    p.Brand == brand &&
+            //    p.Price >= minPrice &&
+            //    p.Price <= maxPrice
+            //).ToList();
 
-            return filteredList.Count;
+            var filteredProducts = await ((ProductsRepository)repo).GetInRange(query);
+
+
+            return filteredProducts.Count;
         }
-        public static async Task<int> GetLengthWithFilters([FromServices] IRepository<Product> repo)
+        public static async Task<int> GetLength([FromServices] IRepository<Product> repo)
         {
             var list = await repo.GetAllAsync();
             return list.Count;
@@ -57,44 +67,32 @@ namespace techPlanetAPI.Endpoints
             else return TypedResults.BadRequest();
         }
 
-        public static async Task<Results<Ok, BadRequest>> AddRange([FromBody] List<Product> products, [FromServices] IRepository<Product> repo)
+        public static async Task<Results<Ok, BadRequest>> AddRange(HttpContext context, [FromBody] List<Product> products, [FromServices] IRepository<Product> repo)
         {
-            //Console.WriteLine(products);
-            //Console.WriteLine(products[0]);
-            //Console.WriteLine(products[0].Charactertics[0].Name);
+
+            Console.WriteLine(context.Request.Body);
+            Console.WriteLine(products[0].Price);
             if (await ((ProductsRepository)repo).AddRangeAsync(products))
                 return TypedResults.Ok();
             else return TypedResults.BadRequest();
         }
-        public static async Task<Results<Ok<List<Product>>, NotFound>> GetRange(int start, int end, [FromServices] IRepository<Product> repo)
-        {
-            var list = await ((ProductsRepository)repo).GetInRange(start, end);
-            if(list.Count > 0)
-                return TypedResults.Ok(list);
-            else return TypedResults.NotFound();
-        }
+        //public static async Task<Results<Ok<List<Product>>, NotFound>> GetRange(int start, int end, [FromServices] IRepository<Product> repo)
+        //{
+        //    var list = await ((ProductsRepository)repo).GetInRange(start, end);
+        //    if(list.Count > 0)
+        //        return TypedResults.Ok(list);
+        //    else return TypedResults.NotFound();
+        //}
 
-        public static async Task<Results<Ok<List<Product>>, NotFound>> GetRangeWithFilters(int start,
-            int end,
-            [FromQuery] string category,
-            [FromQuery] string brand,
-            [FromQuery] decimal minPrice,
-            [FromQuery] decimal maxPrice,
-            [FromQuery] int pageSize,
-            [FromQuery] int pageNum,
-            [FromServices] IRepository<Product> repo)
+        public static async Task<IResult> GetRangeWithFilters(
+            HttpContext httpContext,
+            [AsParameters] ProductSearchQuery query,
+            [FromServices] Context context,
+            [FromServices] IRepository<Product> repository)
         {
-            List<Product> list = await ((ProductsRepository)repo).GetAllAsync();
-            List<Product> filteredList = list.Where(p => p.Category == category &&
-                p.Brand == brand &&
-                p.Price >= minPrice &&
-                p.Price <= maxPrice
-            ).Skip((pageNum - 1) * pageSize)
-            .Take(pageSize).ToList();
-
-            if (filteredList.Count > 0)
-                return TypedResults.Ok(filteredList);
-            else return TypedResults.NotFound();
+            var filteredProducts = await ((ProductsRepository)repository).GetInRange(query);
+            httpContext.Response.Headers.Append("Content-Type", "application/json");
+            return Results.Ok(filteredProducts);
         }
         //public static async Task<Results<Ok, BadRequest>> Update([FromBody] product product, [FromRoute] int id, [FromServices] IRepository<product> repo)
         //{

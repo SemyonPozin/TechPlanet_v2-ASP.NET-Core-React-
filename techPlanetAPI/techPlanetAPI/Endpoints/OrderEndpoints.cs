@@ -10,7 +10,7 @@ namespace techPlanetAPI.Endpoints
     {
         public static IEndpointRouteBuilder MapOrderEndpoints(this IEndpointRouteBuilder app)
         {
-            var orders = app.MapGroup("/Orders");
+            var orders = app.MapGroup("/Orders").RequireAuthorization();
 
             orders.MapGet("", Get);
             orders.MapPost("", Add);
