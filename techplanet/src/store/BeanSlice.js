@@ -6,37 +6,43 @@ import { produce } from 'immer';
 const BeanSlice=createSlice({
     name: "bean",
     initialState: {
-        bean: []
+        bean: {
+            userId: null,
+            basket: []
+        }
     },
     reducers: {
         addToBean(state, action){
-            state.bean.push(action.payload);
+            state.bean.basket.push(action.payload);
         },
         deleteFromBean(state, action){
-            let temp=state.bean.filter((item)=>{return item.id!==action.payload.id});
+            let temp=state.bean.basket.filter((item)=>{return item.id!==action.payload.id});
             // console.log(temp)
             return{...state,
-                bean: temp
+                bean: {
+                    ...state.bean,
+                    basket: temp
+                }
             }
         },
         changeBean(state, action) {
-            const [index, updatedItem, prop ] = action.payload;
-            // Создаем копию массива state.bean
-            const newBeanArray = [...state.bean];
-            // Обновляем нужный элемент в копии массива
-            newBeanArray[index] = {
-              ...newBeanArray[index],
-              [prop]: updatedItem
-            };
-            // Возвращаем новый объект состояния с обновленным массивом
-            return {
-              ...state,
-              bean: newBeanArray
-            };
+        const [index, updatedItem, prop] = action.payload;
+        const newBeanArray = [...state.bean.basket];
+        newBeanArray[index] = {
+            ...newBeanArray[index],
+            [prop]: updatedItem
+        };
+        return {
+            ...state,
+            bean: {
+                userId: state.bean.userId, // Замените bean на state.bean
+                basket: newBeanArray
+            }
+        };
         },
         setBean(state, action){
-            const temp=Array.from(action.payload);
-            return {...state, bean: temp}
+            // const temp=Array.from(action.payload);
+            return {...state, bean: action.payload}
         }
     }
 });

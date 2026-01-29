@@ -6,10 +6,9 @@ import "./order.css";
 import { removeOrder, setOrder } from "./store/OrderSlice";
 import { deleteFromBean } from "./store/BeanSlice";
 import { getDatabase, ref, set } from "firebase/database";
-import { getUID } from "./App";
 import { useUserStatus } from "./hooks/hooks";
 export default function Order(){
-  useUserStatus();
+  // useUserStatus();
   const dispatch=useDispatch();
   const bean = useSelector((state) => state.bean.bean);
   const nextOrder = bean.filter((item) => {
@@ -179,7 +178,7 @@ export function FinishOrder(props) {
   const navigate=useNavigate();
   const order=useSelector((state)=>state.orders.order)
   useEffect(()=>{
-    const uid=getUID();
+    const uid=null//getUID();!!!!!!!
     dispatch(setOrder(["price", props.orderPrice.toFixed(2)]));
     dispatch(setOrder(["uid", uid]))
   }, [])

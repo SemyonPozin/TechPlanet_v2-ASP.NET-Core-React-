@@ -18,11 +18,6 @@ import { useQuery } from "@tanstack/react-query";
 const paginationPerPage = 12;
 const apiUrl = process.env.REACT_APP_API_URL;
 
-// const loadQuery = async (request) => {
-//   let res = await fetch(request);
-//   return res.json();
-// }
-
 async function loadLength(filterObject){
       try{
         let reqStr = `${apiUrl}/Products/Length/filters?`;
@@ -148,10 +143,10 @@ export default memo(function Catalog({
   // }, [bean])
 
   const add = async (e, item) => {
-    if(!authorized){
-      alert("Необходимо войти в аккаунт!");
-      return;
-    }
+    // if(!authorized){
+    //   alert("Необходимо войти в аккаунт!");
+    //   return;
+    // }
     let container = e.target;
     try {
       container.querySelector("path").classList.add("cls-2");
@@ -160,7 +155,7 @@ export default memo(function Catalog({
     }
 
     let flag = true;
-    bean.forEach((bItem) => {
+    bean.basket.forEach((bItem) => {
       if (bItem.id === item.id) {
         flag = false;
       }
@@ -176,7 +171,7 @@ export default memo(function Catalog({
       }
     }, 70);
     console.log(bean)
-    console.log(auth.currentUser.uid)
+    // console.log(auth.currentUser.uid)
     // const oRef=ref(getDatabase(), `users/${auth.currentUser.uid}/basket`);
     // await set(oRef, [...bean, item]);//temp
   };

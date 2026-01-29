@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const GoodsSlice=createSlice({
     name: "authorized",
     initialState: {
-        authorized:false
+        authorized: null
     },
     reducers: {
         setAuthorized: (state, action) => {

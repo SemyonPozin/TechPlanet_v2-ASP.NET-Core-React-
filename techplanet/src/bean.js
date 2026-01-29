@@ -10,15 +10,22 @@ import { getDatabase, ref, set, get, query } from "firebase/database";
 import { auth } from "./firebase";
 import { useUserStatus } from "./hooks/hooks";
 
+// basketType = { 
+//   uId: Number,
+//   basket: []
+// }
+
 export default function Bean() {
 
-  useUserStatus();
+  // useUserStatus();
   const dispatch = useDispatch();
   const bean = useSelector((state) => state.bean.bean);
-  let readyToOrder=bean.filter((item)=>{return item.addToOrder===true});
+  console.log(bean)
+  let readyToOrder=bean.basket.filter(item => item.addToOrder===true);
   const authorized = useSelector((state) => state.authorized.authorized); 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  console.log(bean);
   useEffect(() => {
     function handleResize() {
       setWindowWidth(window.innerWidth);
@@ -28,34 +35,26 @@ export default function Bean() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // useEffect(() => {
-  //   const handleBeforeUnload = (e) => {//это нужно для того чтобы состояние корзины не очищалось перед перезагрузкой из-за всплытия событий
-  //     e.preventDefault();
-  //   };
-  //   window.addEventListener('beforeunload', handleBeforeUnload);
-  //   return () => {
-  //     window.removeEventListener('beforeunload', handleBeforeUnload);
-  //   };
-  // }, []);
-
   useEffect(()=>{
-    if(!!authorized){
-      const oRef=ref(getDatabase(), `users/${auth.currentUser.uid}/basket`);
-      set(oRef, bean);
-    }
+    if(authorized){
+      // const oRef=ref(getDatabase(), `users/${auth.currentUser.uid}/basket`);
+      // set(oRef, bean);
+      localStorage.setItem("basket", JSON.stringify(bean));
+    } else sessionStorage.setItem("basket", JSON.stringify(bean));
+
   }, [bean])
 
   function changeBeanByCountToBuy(item, dir = 1) {
-    const index = bean.findIndex((index) => index.id === item.id);
+    const index = bean.basket.findIndex((index) => index.id === item.id);
     if (index !== -1) {
-      let tempCount = bean[index].countToBuy;
+      let tempCount = bean.basket[index].countToBuy;
       tempCount += dir;
       dispatch(changeBean([index, tempCount, "countToBuy"]));
     }
   }
 
   function changeBeanByAddToOrder(e, item) {
-    const index = bean.findIndex((index) => index.id === item.id);
+    const index = bean.basket.findIndex((index) => index.id === item.id);
     if (index !== -1) {
       let value;
       e.target.checked?value=true:value=false;
@@ -65,18 +64,18 @@ export default function Bean() {
 
   return (
     <div>
-      {!authorized && (
+      {/* {!authorized && (
         <div className="noAcc">
           <div className="needAcc">Необходимо войти в аккаунт</div>
           <div className="enter" onClick={()=>dispatch(setShowLog(true))}>Войти</div>
         </div>
-      )}
-      {!!authorized && bean.length > 0 && ( 
+      )} */}
+      {bean.basket.length > 0 && ( 
           <div className={ windowWidth < 850 ? "grid1 beanContainer" : "grid2 beanContainer"}>
           {readyToOrder.length>0 && <div className="toOrder">
             <Link to="/order"><div>К заказу</div></Link>
           </div>}
-          {bean.map((item) => (
+          {bean.basket.map((item) => (
             <div className="beanItemContainer" key={Date.now()+Math.floor(Math.random() * 1000)}>
               <div className="absol">
                 <div onClick={() => dispatch(deleteFromBean(item))}>
@@ -105,7 +104,7 @@ export default function Bean() {
           ))}
         </div>
       )}
-      {!!authorized && bean.length === 0 && (
+      {bean.basket.length === 0 && (
         <div className="notFound empty">Корзина пуста!</div>
       )}
     </div>

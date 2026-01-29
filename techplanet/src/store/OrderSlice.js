@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUID } from "../App";
 
 const orderSlice=createSlice({
     name: "orders",

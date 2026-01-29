@@ -8,7 +8,7 @@ import { useEffect, useState, useRef } from "react";
 import { Routes, Route } from "react-router-dom";
 import Catalog from "./Catalog.js";
 import About from "./About.js";
-import { useUserStatus, useInitUserStatus } from "./hooks/hooks.js";
+import { useInitUserStatus, UseInitBasket } from "./hooks/hooks.js";
 import Order from "./order.js";
 import ProductPage from "./ProductPage.js";
 import { getDatabase, ref, get, push, set, query } from "firebase/database";
@@ -22,147 +22,113 @@ import { CategorySharp, Description } from "@mui/icons-material";
 import Preloader from "./Preloader.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-export const getUID = () => {
-  try {
-    return auth.currentUser.uid;
-  } catch (error) {
-    console.log("!!!" + error);
-    return false;
-  }
-};
 
 export default function App() {
   // useInitUserStatus(); //кастомный хук
-
   const dispatch = useDispatch();
-  const [fetching, setFetching] = useState(false);
-  let goods = useSelector(state => state.goods.goods);
+  // const [fetching, setFetching] = useState(false);
+  // let goods = useSelector(state => state.goods.goods);
   let firstRender = useRef(true);
+  // const bean=useSelector(state=>state.bean.bean);
+
+
   let apiUrl = process.env.REACT_APP_API_URL;
   const queryClient = new QueryClient();
-  
-  const fetchGoods = async () => {
-    try {
-      // const snapshot = await get(query(ref(getDatabase(), `goods`)));
-      // if (snapshot.exists()) {
-      //   dispatch(setGoods(snapshot.val()));
-      // } else {
-      //   console.log("База данных пуста.");
-      // }
-      let res = await fetch(`${apiUrl}/Products`);
-      let goods = await res.json();
-      console.log(goods)
-      dispatch(setGoods(goods));
-    } catch (error) {
-      console.error("Ошибка при получении данных базы данных:", error);
-    }
-  };
 
-  const fetchBean = async (uid) => {
-    uid=getUID();
-    console.log(uid)
-    if(!uid)
-      return;
-    try {
-      const snapshot = await get(
-        query(ref(getDatabase(), `users/${uid}/basket`))
-      );
-      if (snapshot.exists()) {
-        console.log(snapshot.val())
-        dispatch(setBean(snapshot.val()));
-      } else {
-        console.log("База данных пуста.");
-      }
-    } catch (error) {
-      console.error("Ошибка при получении данных базы данных:", error);
-    }
-  };
+  if(firstRender.current){
+    UseInitBasket();
+    firstRender.current = false;
+  }
 
-  async function postGoods() {
+  // useEffect(()=>console.log(bean), [bean]);
+
+  const tryFetchUserData = async () => {
     try{
-    console.log(goods);
-    let arr = [];
-    let tempObj;
-    let tempCharacteristics;
+      const res = await fetch(`${apiUrl}/Users`);
+      console.log(res);
+    } catch(ex) {
+      console.log(ex.message);
+    }
+  }
 
-    goods.map(i => {
-      tempCharacteristics = []
-      console.log(i.charactertics);
-      i.charactertics.map(char => {
-        tempCharacteristics.push({name: char.name, description: char.desc})
-      });
-      tempObj = {
-        name: i.name,
-        Brand: i.brand,
-        price: i.price,
-        img: i.img,
-        isNew: i.new,
-        discount: i.discount,
-        countToBuy: i.countToBuy,
-        charactertics: tempCharacteristics,//null,
-        description: i.description ,
-        category: i.category,
-        orders: null
-      };
-      arr.push(tempObj);
+  useEffect(()=>tryFetchUserData, []);
+  
+  // const fetchGoods = async () => {
+  //   try {
+  //     let res = await fetch(`${apiUrl}/Products`);
+  //     let goods = await res.json();
+  //     dispatch(setGoods(goods));
+  //   } catch (error) {
+  //     console.error("Ошибка при получении данных базы данных:", error);
+  //   }
+  // };
+
+  // async function postGoods() {
+  //   try{
+  //   console.log(goods);
+  //   let arr = [];
+  //   let tempObj;
+  //   let tempCharacteristics;
+
+  //   goods.map(i => {
+  //     tempCharacteristics = []
+  //     console.log(i.charactertics);
+  //     i.charactertics.map(char => {
+  //       tempCharacteristics.push({name: char.name, description: char.desc})
+  //     });
+  //     tempObj = {
+  //       name: i.name,
+  //       Brand: i.brand,
+  //       price: i.price,
+  //       img: i.img,
+  //       isNew: i.new,
+  //       discount: i.discount,
+  //       countToBuy: i.countToBuy,
+  //       charactertics: tempCharacteristics,//null,
+  //       description: i.description ,
+  //       category: i.category,
+  //       orders: null
+  //     };
+  //     arr.push(tempObj);
       
-    })
+  //   })
     
-    let headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    await fetch("https://localhost:7046/Products", {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(arr)
-      }
-    )
+  //   let headers = new Headers();
+  //   headers.append("Content-Type", "application/json");
+  //   await fetch("https://localhost:7046/Products", {
+  //       method: 'POST',
+  //       headers: headers,
+  //       body: JSON.stringify(arr)
+  //     }
+  //   )
 
-    } catch(err){
-      console.log(err.message)
-    }
-  }
+  //   } catch(err){
+  //     console.log(err.message)
+  //   }
+  // }
 
-  async function fetchAll() {
-    // const uid = getUID();
-    if(firstRender){
-      setFetching(true);
+  // async function fetchAll() {
+  //   if(firstRender){
+  //     setFetching(true);
     
-      // await postGoods();
-      // await fetchGoods();
-      // if (!!uid) 
-      // await fetchBean(uid);
-      // else console.log("net");
-      setFetching(false);
-      firstRender = false;
-    }
-  }
+  //     // await postGoods();
+  //     // await fetchGoods();
+  //     // if (!!uid) 
+  //     // await fetchBean(uid);
+  //     // else console.log("net");
+  //     setFetching(false);
+  //     firstRender = false;
+  //   }
+  // }
 
   // useEffect(() => {
   //   fetchAll();
   // }, []);
 
-  // const goods = useSelector((state) => state.goods.goods);
-
-  // useEffect(() => {
-  //   const initGoodsInDB = async () => {
-  //     try {
-  //       const db = getDatabase();
-  //       for (const item of goods) {
-  //         const itemRef = ref(db, `goods/${item.key}`);
-  //         await set(itemRef, item);
-  //       }
-  //     } catch (error) {
-  //       console.error('Ошибка при записи данных в базу данных:', error);
-  //     }
-  //   };
-
-  //   initGoodsInDB();
-  // }, [goods]);
-
   return (
     <QueryClientProvider client={queryClient}>
     <div className="App">
-      {!fetching ? (
+      {/* {!fetching ? ( */}
         <>
           <Header></Header>
           <Routes>
@@ -179,9 +145,9 @@ export default function App() {
           </Routes>
           <Footer></Footer>
         </>
-      ) : (
-        <Preloader width = "100vw" height="100vh"/>
-      )}
+      {/* ) : (
+       <Preloader width = "100vw" height="100vh"/>
+      )} */}
     </div>
     </QueryClientProvider>
   );

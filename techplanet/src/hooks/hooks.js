@@ -1,5 +1,5 @@
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setAuthorized } from '../store/AuthorizedSlice.js';
 import firebaseApp from '../firebase.js';
 import { useEffect, useCallback } from 'react';
@@ -12,8 +12,8 @@ export const useUserStatus=()=>{
       const temp=user!==null?{displayName: user.displayName,
         mail: user.mail,
         uid: user.uid,}:null;
-        if(!user)
-          dispatch(setBean([]));
+        // if(!user)
+        //   dispatch(setBean([]));
       dispatch(setAuthorized(temp))
     }
   
@@ -27,7 +27,7 @@ export const useInitUserStatus = () => {
   const dispatch = useDispatch();
 
   const handleAuthStateChanged = (user) =>
-     {
+  {
     const temp=user!==null?{displayName: user.displayName,
       mail: user.mail,
       uid: user.uid,}:null;
@@ -39,3 +39,26 @@ export const useInitUserStatus = () => {
     return unsubscribe;
   }, [handleAuthStateChanged]);
 };
+
+export const UseInitBasket = () => {
+  // useEffect(()=>{
+    const dispatch = useDispatch();
+    const user = useSelector(state => state.authorized.authorized);
+    let basket;
+    if(user != null &&
+      user.Id == JSON.parse(localStorage.getItem("basket")).userId){
+      basket = JSON.parse(localStorage.getItem("basket"))
+    } else {
+      basket = JSON.parse(sessionStorage.getItem("basket"))
+    } 
+
+    console.log(basket)
+    
+    basket = basket && basket.length ? basket : {
+      userId: null,
+      basket: []
+    }
+
+    dispatch(setBean(basket))
+  // }, [])
+}

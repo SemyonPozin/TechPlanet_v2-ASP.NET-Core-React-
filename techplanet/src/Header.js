@@ -13,6 +13,7 @@ export default function Header() {
   const autMenuOpened=useSelector((state) => state.showLog.showLogMenu);
   const location=useLocation();
   const bean=useSelector(state=>state.bean.bean);
+  console.log(bean)
   const authorized = useSelector((state) => state.authorized.authorized); 
   
   useEffect(()=>{
@@ -53,7 +54,7 @@ export default function Header() {
             <div className="point" onClick={()=>setMenuOpened(false)}><Link to='/catalog' className="headerLink">Каталог</Link></div>
           <div className="point" onClick={()=>setMenuOpened(false)}>
             <Link to='/basket' className="headerLink">Корзина</Link>
-          {(!!bean.length && authorized) && <div className={bean.length>9?"beanCountMobile outline":"beanCountMobile"}>{bean.length>99?"99+":bean.length}</div>}
+          {(!!bean.basket.length && authorized) && <div className={bean.length>9?"beanCountMobile outline":"beanCountMobile"}>{bean.length>99?"99+":bean.length}</div>}
           </div>
           <div className="point" onClick={()=>setMenuOpened(false)}><Link to='/about' className="headerLink">О нас</Link></div>
           <div className="point" onClick={()=>{setMenuOpened(false); dispatch(setShowLog(true));}}>
