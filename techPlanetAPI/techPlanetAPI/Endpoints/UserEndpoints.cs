@@ -18,7 +18,6 @@ namespace techPlanetAPI.Endpoints
 
             users.MapGet("{id:int}", GetById);
             users.MapPut("{id:int}", Update);
-            users.MapPost("", Add);
             users.MapPost("login", Login);
             users.MapPost("register", Register);
             return app;
@@ -30,12 +29,6 @@ namespace techPlanetAPI.Endpoints
             if (user is null)
                 Results.Ok();
             return Results.NotFound();
-        }
-        public static async Task<Results<Ok, BadRequest>> Add([FromBody] User order, [FromServices] IRepository<User> repo)
-        {
-            if (await repo.AddAsync(order))
-                return TypedResults.Ok();
-            else return TypedResults.BadRequest();
         }
         public static async Task<Results<Ok, BadRequest>> Update([FromBody] User user, [FromRoute] int id, [FromServices] IRepository<User> repo)
         {

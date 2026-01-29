@@ -22,7 +22,7 @@ namespace techPlanetAPI.Services
         }
         public string GenerateToken(User user)
         {
-            Claim[] claims = [ new("UserId", user.Id.ToString())];
+            Claim[] claims = [ new("UserId", user.Id.ToString()), new("role", user.RoleId.ToString())];
 
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SecretKey)),

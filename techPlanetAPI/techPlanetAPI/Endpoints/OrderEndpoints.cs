@@ -2,7 +2,9 @@
 using Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using techPlanetAPI.Services.Authorization;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Domain.Enums;
 
 namespace techPlanetAPI.Endpoints
 {
@@ -10,7 +12,8 @@ namespace techPlanetAPI.Endpoints
     {
         public static IEndpointRouteBuilder MapOrderEndpoints(this IEndpointRouteBuilder app)
         {
-            var orders = app.MapGroup("/Orders").RequireAuthorization();
+            var orders = app.MapGroup("/Orders").RequireAuthorization(policy => 
+                policy.AddRequirements(new PermissionRequirement(new Permissions[] { Permissions.OrdersOperations })));
 
             orders.MapGet("", Get);
             orders.MapPost("", Add);

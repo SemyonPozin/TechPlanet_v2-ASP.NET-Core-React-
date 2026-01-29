@@ -3,6 +3,7 @@ using DataAccessLevel.Repositories;
 using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
@@ -18,6 +19,7 @@ using System.Xml.Linq;
 using techPlanetAPI.Configuration;
 using techPlanetAPI.Endpoints;
 using techPlanetAPI.Services;
+using techPlanetAPI.Services.Authorization;
 
 internal class Program
 {
@@ -57,6 +59,7 @@ internal class Program
         builder.Services.AddScoped<IJWTProvider, JWTProvider>();
         builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IAuthorizationHandler, PermissionsHandler>();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,options =>
@@ -67,7 +70,17 @@ internal class Program
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtOptions:SecretKey"]))//["JwtOptions:SecretKey"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtOptions:SecretKey"])),
+                    RoleClaimType = "role"
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies["oreo"];    
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

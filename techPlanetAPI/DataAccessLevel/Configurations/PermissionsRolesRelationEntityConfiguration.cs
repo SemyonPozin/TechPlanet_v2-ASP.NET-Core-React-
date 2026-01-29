@@ -27,10 +27,8 @@ namespace DataAccessLevel.Configurations
 
             var list = new List<PermissionsRolesRelationEntity>();
             list.Add(new PermissionsRolesRelationEntity() { PermissionId = 1, RoleId = 1 });
-            list.Add(new PermissionsRolesRelationEntity() { PermissionId = 2, RoleId = 1 });
             list.Add(new PermissionsRolesRelationEntity() { PermissionId = 1, RoleId = 2 });
             list.Add(new PermissionsRolesRelationEntity() { PermissionId = 2, RoleId = 2 });
-            list.Add(new PermissionsRolesRelationEntity() { PermissionId = 3, RoleId = 2 });
             builder.HasData(list);
 
         }

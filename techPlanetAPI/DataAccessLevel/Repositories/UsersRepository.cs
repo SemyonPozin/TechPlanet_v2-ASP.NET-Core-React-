@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,5 +79,15 @@ namespace DataAccessLevel.Repositories
 
         public async Task<User?> GetByEmailAsync(string email) =>
            await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
+
+        public List<PermissionEntity> GetUserPermissions(int userId)
+        {
+            return _context.Users.AsNoTracking()
+                .Where(u => u.Id == userId)
+                .Select(u => u.Role)
+                .SelectMany(r => r.Relations)
+                .Select(rel => rel.Permission)
+                .ToList();
+        }
     }
 }

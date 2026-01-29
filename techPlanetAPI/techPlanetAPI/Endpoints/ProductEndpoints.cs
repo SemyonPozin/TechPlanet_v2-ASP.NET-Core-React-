@@ -1,12 +1,14 @@
 ﻿using DataAccessLevel;
 using DataAccessLevel.Repositories;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Queries;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using techPlanetAPI.Services.Authorization;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace techPlanetAPI.Endpoints
@@ -22,7 +24,8 @@ namespace techPlanetAPI.Endpoints
             products.MapGet("/Length/filters", GetLengthWithFilters);
             //products.MapGet("/{start:int}-{end:int}", GetRange);
             products.MapGet("/filters", GetRangeWithFilters);
-            products.MapPost("", AddRange);
+            products.MapPost("", AddRange).RequireAuthorization(policy => 
+                policy.AddRequirements(new PermissionRequirement(new Permissions[] { Permissions.AddNewProduct })));
 
             return app;
         }
@@ -69,9 +72,6 @@ namespace techPlanetAPI.Endpoints
 
         public static async Task<Results<Ok, BadRequest>> AddRange(HttpContext context, [FromBody] List<Product> products, [FromServices] IRepository<Product> repo)
         {
-
-            Console.WriteLine(context.Request.Body);
-            Console.WriteLine(products[0].Price);
             if (await ((ProductsRepository)repo).AddRangeAsync(products))
                 return TypedResults.Ok();
             else return TypedResults.BadRequest();

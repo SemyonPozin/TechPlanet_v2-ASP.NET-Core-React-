@@ -8,8 +8,7 @@ namespace Domain.Enums
 {
     public enum Permissions
     {
-       Get = 1,
-       AddOrder = 2,
-       AddNewProduct = 3
+       OrdersOperations = 1,
+       AddNewProduct
     }
 }
