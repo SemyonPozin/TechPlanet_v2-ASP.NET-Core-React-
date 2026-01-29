@@ -16,19 +16,23 @@ namespace techPlanetAPI.Endpoints
             //app.MapGet("/Login", () => ...);
             var users = app.MapGroup("Users");
 
-            users.MapGet("{id:int}", GetById);
+            users.MapGet("", Get).RequireAuthorization(policy => 
+                policy.RequireAuthenticatedUser());//{id:int}
             users.MapPut("{id:int}", Update);
             users.MapPost("login", Login);
             users.MapPost("register", Register);
             return app;
         }
 
-        public static async Task<IResult> GetById([FromRoute]int id, [FromServices] IRepository<User> repo)
+        public static async Task<IResult> Get(HttpContext context, [FromServices] IRepository<User> repo)
         {
+            int id = Convert.ToInt32(context.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value);
+            if(id == 0)
+                return Results.Unauthorized();
             var user = await ((UsersRepository)repo).GetByIdAsync(id);
-            if (user is null)
-                Results.Ok();
-            return Results.NotFound();
+            if (user != null)
+                return Results.Ok(user);
+            return Results.Unauthorized();
         }
         public static async Task<Results<Ok, BadRequest>> Update([FromBody] User user, [FromRoute] int id, [FromServices] IRepository<User> repo)
         {

@@ -30,11 +30,6 @@ internal class Program
         builder.Configuration.AddJsonFile("Database.config.json", optional: false);
         builder.Services.Configure<DatabaseConfiguration>(builder.Configuration.GetSection("DatatbaseConfiguration"));
         builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
-        //builder.Services.AddScoped<IRepository<Product>, ProductsRepository>((IServiceProvider p) =>
-        //{
-        //    string connstr = p.GetRequiredService<IOptions<DatabaseConfiguration>>().Value.ConnectionString;
-        //    return new ProductsRepository(new Context(new Microsoft.EntityFrameworkCore.DbContextOptions<Context>(), connstr));
-        //});
 
         builder.Services.AddCors(options =>
         {
@@ -104,24 +99,6 @@ internal class Program
         app.MapGet("/", async ([FromServices]IRepository<Product> repo) =>
         {
             var products = await repo.GetAllAsync();
-            //if (products.Count == 0)
-            //{
-            //await repo.AddAsync(new Product()
-            //{
-            //    Name = "Apple iPhone 15 Pro 128GB",
-            //    Brand = "Apple",
-            //    Price = 4599,
-            //    Img = "https://alloplus.by/upload/iblock/05b/f08cdopkaoi5smbsxdl80wpqqb1vuywr.jpg",
-            //    IsNew = true,
-            //    Discount = 0,
-            //    CountToBuy = 1,
-            //    Category = "phones",
-            //    Description = "ewew",
-            //    Charactertics = new List<ProductCharacteristics>(){ new ProductCharacteristics() { Description = "dv", Name = "ds" } }
-            //});
-
-            //}
-            //return JsonSerializer.Serialize(products);
             return products.Count;
         });
 
