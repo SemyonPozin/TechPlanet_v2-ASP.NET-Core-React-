@@ -11,44 +11,19 @@ import {
   onAuthStateChanged, 
   signOut
 } from "firebase/auth";
-import firebaseApp from "./firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthorized } from "./store/AuthorizedSlice";
 import { useUserStatus } from "./hooks/hooks";
 import { setShowLog } from "./store/logMenuSlice";
 import { ref, set, getDatabase } from "firebase/database";
 
-export async function userRegister(email, password, phone, username) {
-  return async (dispatch) => {//использование redux thunk
-    const auth = getAuth();
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      await updateProfile(user, {
-        displayName: username,
-        phoneNumber: phone,
-      });
-      const userRef=ref(getDatabase(), `/users/${user.uid}`);
-      await set(userRef, {username, email, phone, basket: []});
-      dispatch(setAuthorized(userCredential.user))
-    } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log({ errorCode, errorMessage });
-    }
-  };
-}
-
 export default function AuthorizationForm(props) {
   const dispatch = useDispatch();
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [logging, setLogging] = useState(true);  
   const [regging, setRegging] = useState(false);
   const authorized = useSelector((state) => state.authorized.authorized);
-  useUserStatus();//кастомный хук
+  // useUserStatus();//кастомный хук
 
   const showPass = () => {
     let pass = document.getElementsByName("password")[0];
@@ -69,16 +44,13 @@ export default function AuthorizationForm(props) {
   function close() {
     reset();
     dispatch(setShowLog(false));
-    
   }
 
   async function submit(data) {
     if (!isValid) return;
-    if (!data.phone) {
-      close();
-    } else {
-      close();
-      const result =  dispatch(
+    close();
+    if (data.phone) {
+      dispatch(//const result =  
         await userRegister(
           data.email,
           data.password,
@@ -91,24 +63,76 @@ export default function AuthorizationForm(props) {
 
   function logIn(data) {
     if (!isValid) return;
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, data.email, data.password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-        dispatch(setAuthorized(user));
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(error);
+
+    // console.log(data);
+    fetch(`${apiUrl}/Users/login`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    }).then((res) => {
+      if(!res.ok) throw new Error("login failed");
+      return res.text()
+    }).then((token) => {
+      token = token.replace(/"/g, '');
+      localStorage.setItem("token", token);
+      console.log(token);
+      return fetch(`${apiUrl}/Users/me`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       });
+    }).then(res =>{ 
+      if(!res.ok) throw new Error("failed to load user");
+      return res.json()
+    }).then((userData) => {
+      console.log(userData);
+      dispatch(setAuthorized(userData))
+    })
+    .catch(error => alert(error.message));
+
     close();
   }
 
   async function logout(){
-    await signOut(getAuth());
-    close();
+    try{
+      const res = await fetch(`${apiUrl}/Users/logout`, {
+        credentials: "include",
+        method: "POST"
+      });
+
+      if(!res.ok) throw new Error("logout failed")
+
+      dispatch(setAuthorized(null))
+      close();
+    } catch(error){
+      alert(error.message);
+    }
+  }
+
+  async function userRegister(email, password, phone, username) {
+  try{
+    const res = await fetch(`${apiUrl}/Users/register`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email, password, phone, name: username, roleId : 1
+      })
+    })
+
+    if(!res.ok)
+      throw new Error("registration failed");
+    logIn({password, email})
+    } catch(error){
+      alert(error.message);
+    }
   }
 
   return (
@@ -178,7 +202,7 @@ export default function AuthorizationForm(props) {
                 required: "Заполните поле!",
                 pattern: {
                   value:
-                    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
                   message:
                     "Пароль должен содежать заглавные буквы, цифры и спец. символы!",
                 },
@@ -257,13 +281,7 @@ export default function AuthorizationForm(props) {
               type="password"
               className={styles.input}
               {...register("password", {
-                required: "Заполните поле!",
-                pattern: {
-                  value:
-                    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  message:
-                    "Пароль должен содежать заглавные буквы, цифры и спец. символы!",
-                },
+                required: "Заполните поле!"
               })}
               style={{
                 border: errors.password
@@ -306,7 +324,7 @@ export default function AuthorizationForm(props) {
       <div className={styles.hello}>
         <img className={styles.userPic} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6mklexP7IGYmTrZKIdXlhd9D6PxkRV2PQvnfTYkJE82kWRam-89TfZ0mx1I_U3JCVPgQ&usqp=CAU"></img>
       </div>
-        <div className={styles.hello}>{`Здравствуйте, ${authorized.displayName}!`}</div>  
+        <div className={styles.hello}>{`Здравствуйте, ${authorized.name}!`}</div>  
         <div  className={styles.leave} onClick={()=>logout()}>Выйти</div>
       </div>}
     </div>

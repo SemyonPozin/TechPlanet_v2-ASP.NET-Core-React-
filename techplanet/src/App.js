@@ -21,6 +21,7 @@ import Box from "@mui/material/Box";
 import { CategorySharp, Description } from "@mui/icons-material";
 import Preloader from "./Preloader.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { setAuthorized } from "./store/AuthorizedSlice.js";
 
 
 export default function App() {
@@ -35,23 +36,32 @@ export default function App() {
   let apiUrl = process.env.REACT_APP_API_URL;
   const queryClient = new QueryClient();
 
-  if(firstRender.current){
+  // if(firstRender.current){
     UseInitBasket();
-    firstRender.current = false;
-  }
+  //   firstRender.current = false;
+  // }
 
   // useEffect(()=>console.log(bean), [bean]);
 
   const tryFetchUserData = async () => {
     try{
-      const res = await fetch(`${apiUrl}/Users`);
+      const res = await fetch(`${apiUrl}/Users/me`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+      });
       console.log(res);
+      let user = await res.json();
+      dispatch(setAuthorized(user))
     } catch(ex) {
       console.log(ex.message);
     }
   }
 
-  useEffect(()=>tryFetchUserData, []);
+  // useEffect(()=>{
+  //   if(firstRender.current)
+  //     tryFetchUserData()
+  // }, []);
   
   // const fetchGoods = async () => {
   //   try {
