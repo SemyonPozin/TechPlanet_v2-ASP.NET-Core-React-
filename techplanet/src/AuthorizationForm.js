@@ -100,13 +100,13 @@ export default function AuthorizationForm(props) {
 
   async function logout(){
     try{
-      const res = await fetch(`${apiUrl}/Users/logout`, {
-        credentials: "include",
-        method: "POST"
-      });
+      // const res = await fetch(`${apiUrl}/Users/logout`, {
+      //   credentials: "include",
+      //   method: "POST"
+      // });
 
-      if(!res.ok) throw new Error("logout failed")
-
+      // if(!res.ok) throw new Error("logout failed")
+      localStorage.removeItem("token");
       dispatch(setAuthorized(null))
       close();
     } catch(error){
@@ -319,7 +319,7 @@ export default function AuthorizationForm(props) {
           </div>
         </form>
       )}
-      {!!authorized && <div className={styles.quit} style={{backgroundColor: "black"}}>
+      {authorized && <div className={styles.quit} style={{backgroundColor: "black"}}>
       <div className={styles.absol} onClick={() => close()}>&#x2715;</div>
       <div className={styles.hello}>
         <img className={styles.userPic} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6mklexP7IGYmTrZKIdXlhd9D6PxkRV2PQvnfTYkJE82kWRam-89TfZ0mx1I_U3JCVPgQ&usqp=CAU"></img>

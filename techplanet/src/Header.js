@@ -13,7 +13,7 @@ export default function Header() {
   const autMenuOpened=useSelector((state) => state.showLog.showLogMenu);
   const location=useLocation();
   const bean=useSelector(state=>state.bean.bean);
-  console.log(bean)
+  // console.log(bean)
   const authorized = useSelector((state) => state.authorized.authorized); 
   
   useEffect(()=>{

@@ -4,14 +4,13 @@ const orderSlice=createSlice({
     name: "orders",
     initialState: {
         order:{
-            goods: [],
-            uid: null,
+            products: [],
+            userId: null,
             done: false,
             price: 0,
             date: null,
             delivery: null,
             address: null,
-            time: null,
         }
     },
     reducers: {
@@ -23,15 +22,14 @@ const orderSlice=createSlice({
         },
         removeOrder: (state)=>{
             state.order={
-                goods: [],
-                uid: null,
+                products: [],
+                userId: null,
                 done: false,
                 price: 0,
                 date: null,
                 delivery: null,
                 address: null,
-                time: null,
-            };
+            }
         }
     }
 });

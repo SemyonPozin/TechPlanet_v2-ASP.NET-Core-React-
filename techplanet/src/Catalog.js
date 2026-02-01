@@ -14,6 +14,8 @@ import { auth } from "./firebase";
 import { setGoods } from "./store/GoodsSlice";
 import Preloader from "./Preloader";
 import { useQuery } from "@tanstack/react-query";
+import { saveBasket } from "./bean";
+
 
 const paginationPerPage = 12;
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -135,13 +137,6 @@ export default memo(function Catalog({
     changePage(null, 1);
   }, [filterObject]);
 
-  // useEffect(()=>{
-  //   if(!!authorized){
-  //     const oRef=ref(getDatabase(), `users/${auth.currentUser.uid}/basket`);
-  //     set(oRef, bean);
-  //   }
-  // }, [bean])
-
   const add = async (e, item) => {
     // if(!authorized){
     //   alert("Необходимо войти в аккаунт!");
@@ -176,9 +171,11 @@ export default memo(function Catalog({
     // await set(oRef, [...bean, item]);//temp
   };
 
-  const pagesCount = Math.ceil(length / paginationPerPage);
+  useEffect(() => {
+    saveBasket(bean, authorized);
+  }, [bean])
 
-  console.log(length)
+  const pagesCount = Math.ceil(length / paginationPerPage);
 
   if (!(goodsLoading || lengthLoading)){ return (
     <div className="goodsContainer">

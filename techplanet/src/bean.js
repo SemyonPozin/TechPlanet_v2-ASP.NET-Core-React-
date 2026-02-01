@@ -15,6 +15,12 @@ import { useUserStatus } from "./hooks/hooks";
 //   basket: []
 // }
 
+export const saveBasket = (basket, authorized) => {
+  if(authorized)
+    localStorage.setItem("basket", JSON.stringify(basket));
+  else sessionStorage.setItem("basket", JSON.stringify(basket));
+}
+
 export default function Bean() {
 
   // useUserStatus();
@@ -25,7 +31,6 @@ export default function Bean() {
   const authorized = useSelector((state) => state.authorized.authorized); 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  console.log(bean);
   useEffect(() => {
     function handleResize() {
       setWindowWidth(window.innerWidth);
@@ -35,14 +40,13 @@ export default function Bean() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(()=>{
-    if(authorized){
-      // const oRef=ref(getDatabase(), `users/${auth.currentUser.uid}/basket`);
-      // set(oRef, bean);
-      localStorage.setItem("basket", JSON.stringify(bean));
-    } else sessionStorage.setItem("basket", JSON.stringify(bean));
+  // useEffect(()=>{
+  //   console.log(bean);
+  //   if(authorized){
+  //     localStorage.setItem("basket", JSON.stringify(bean));
+  //   } else sessionStorage.setItem("basket", JSON.stringify(bean));
 
-  }, [bean])
+  // }, [bean])
 
   function changeBeanByCountToBuy(item, dir = 1) {
     const index = bean.basket.findIndex((index) => index.id === item.id);
@@ -61,6 +65,10 @@ export default function Bean() {
       dispatch(changeBean([index, value, "addToOrder"]));
     }
   }
+
+  useEffect(() => {
+    saveBasket(bean, authorized);
+  }, [bean])
 
   return (
     <div>

@@ -11,7 +11,7 @@ export default function Order(){
   // useUserStatus();
   const dispatch=useDispatch();
   const bean = useSelector((state) => state.bean.bean);
-  const nextOrder = bean.filter((item) => {
+  const nextOrder = bean.basket.filter((item) => {
     return item.addToOrder === true;
   });
   const [orderTuning, setOrderTuning]=useState(true);
@@ -27,9 +27,9 @@ export default function Order(){
   useEffect(()=>{dispatch(setOrder(["goods", nextOrder]))}, [])//
   const findOrderPrice=()=>{
     if(order.length===0) return 0;
-    else if(order.length===1) return order.goods[0].price;
+    else if(order.length===1) return order.products[0].price;
     else{
-      let temp = order.goods.reduce((prev, item) => {
+      let temp = order.products.reduce((prev, item) => {
         return prev + item.countToBuy*(item.price-(item.price*item.discount*0.01));
       }, 0)
       return temp;
@@ -69,7 +69,7 @@ export function OrderTune(props) {
   const navigate = useNavigate();
   const dispatch=useDispatch();
   const bean = useSelector((state) => state.bean.bean);
-  let nextOrder = bean.filter((item) => {
+  let nextOrder = bean.basket.filter((item) => {
     return item.addToOrder === true;
   });
   useEffect(() => {
@@ -176,17 +176,34 @@ export function DeliveryOrder(props) {
 export function FinishOrder(props) {
   const dispatch=useDispatch();
   const navigate=useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
   const order=useSelector((state)=>state.orders.order)
+  const user = useSelector(state => state.authorized.authorized);
   useEffect(()=>{
     const uid=null//getUID();!!!!!!!
     dispatch(setOrder(["price", props.orderPrice.toFixed(2)]));
-    dispatch(setOrder(["uid", uid]))
+    // dispatch(setOrder(["uid", uid]))
   }, [])
   useEffect(()=>{
-    const finish=async ()=>{
+    const finish = async ()=>{
+      console.log(order)
       if(order.date!==null){
-      const oRef=ref(getDatabase(), `orders/${order.date+order.uid+"||"+Math.floor(Math.random() * 10000) + 1}`);
-      set(oRef, order);//await
+        const { uid, time, goods, ...toSend} = order;
+        toSend.userId = user.id;
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${apiUrl}/Orders`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(toSend)
+      })
+      if(!res.ok){
+        alert("error");
+        return;
+      }
       dispatch(removeOrder());
       navigate("/catalog");
       alert("Заказ оформлен");
@@ -196,7 +213,7 @@ export function FinishOrder(props) {
     const handleSubmit=(e)=>{
     e.preventDefault();
     dispatch(setOrder(["date", new Date()]))
-    order.goods.map((item)=>{
+    order.products.map((item)=>{
       dispatch(deleteFromBean(item));
     })
   }
@@ -204,7 +221,7 @@ export function FinishOrder(props) {
       <form className="finishForm" onSubmit={(e)=>handleSubmit(e)}>
         <div className="h" style={{textAlign: "center"}}>Подтверждение</div>
         <div className="goodsList">
-          {order.goods.map((item)=>(
+          {order.products.map((item)=>(
             <div className="listItem" key={item.id}>
               <div className="itemImg">
                 <img src={item.img}></img>

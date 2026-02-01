@@ -40,53 +40,30 @@ export const useInitUserStatus = () => {
   }, [handleAuthStateChanged]);
 };
 
-// export const UseInitBasket = () => {
-//   // useEffect(()=>{
-//     const dispatch = useDispatch();
-//     const user = useSelector(state => state.authorized.authorized);
-//     let basket;
-//     if(user != null &&
-//       user.Id == JSON.parse(localStorage.getItem("basket")).userId){
-//       basket = JSON.parse(localStorage.getItem("basket"))
-//     } else {
-//       basket = JSON.parse(sessionStorage.getItem("basket"))
-//     } 
-
-//     console.log(basket)
-    
-//     basket = basket && basket.length ? basket : {
-//       userId: null,
-//       basket: []
-//     }
-
-//     dispatch(setBean(basket))
-//   // }, [])
-// }
-
-export const UseInitBasket = () => {
+export const UseInitBasket = (userId) => {
   const dispatch = useDispatch();
-  const user = useSelector(state => state.authorized.authorized);
 
-  // Получаем basket из localStorage или sessionStorage
-  const localBasketRaw = localStorage.getItem("basket");
-  const sessionBasketRaw = sessionStorage.getItem("basket");
+  useEffect(() => {
+    if (!userId) return;
 
-  let basket = null;
+    const localRaw = localStorage.getItem("basket");
+    const sessionRaw = sessionStorage.getItem("basket");
 
-  if (localBasketRaw) {
-    const localBasket = JSON.parse(localBasketRaw);
-    if (user && localBasket.userId === user.Id) {
-      basket = localBasket;
+    let basket = null;
+
+    if (localRaw) {
+      const parsed = JSON.parse(localRaw);
+      if (parsed.userId === userId) {
+        basket = parsed;
+      }
     }
-  }
 
-  if (!basket && sessionBasketRaw) {
-    basket = JSON.parse(sessionBasketRaw);
-  }
+    if (!basket && sessionRaw) {
+      basket = JSON.parse(sessionRaw);
+    }
 
-  // Если basket всё ещё null или пустой, создаём пустой
-  basket = basket && Object.keys(basket).length ? basket : { userId: null, basket: [] };
+    basket ??= { userId, basket: [] };
 
-  console.log(basket);
-  dispatch(setBean(basket));
+    dispatch(setBean(basket));
+  }, [userId, dispatch]);
 };

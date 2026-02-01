@@ -22,14 +22,14 @@ import { CategorySharp, Description } from "@mui/icons-material";
 import Preloader from "./Preloader.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { setAuthorized } from "./store/AuthorizedSlice.js";
+import { setUserId } from "./store/BeanSlice.js";
 
 
 export default function App() {
-  // useInitUserStatus(); //кастомный хук
   const dispatch = useDispatch();
-  // const [fetching, setFetching] = useState(false);
-  // let goods = useSelector(state => state.goods.goods);
   let firstRender = useRef(true);
+  const userId = useSelector(state => state.bean.bean).userId;
+    UseInitBasket(userId);
   // const bean=useSelector(state=>state.bean.bean);
 
 
@@ -37,7 +37,7 @@ export default function App() {
   const queryClient = new QueryClient();
 
   // if(firstRender.current){
-    UseInitBasket();
+    // UseInitBasket();
   //   firstRender.current = false;
   // }
 
@@ -50,90 +50,26 @@ export default function App() {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
       });
-      console.log(res);
+      if(!res.ok) throw new Error("failed to load user")
       let user = await res.json();
-      dispatch(setAuthorized(user))
-    } catch(ex) {
-      console.log(ex.message);
+      dispatch(setAuthorized(user));
+      dispatch(setUserId(user.id));
+    } catch(error) {
+      console.log(error);
     }
   }
 
-  // useEffect(()=>{
-  //   if(firstRender.current)
-  //     tryFetchUserData()
-  // }, []);
-  
-  // const fetchGoods = async () => {
-  //   try {
-  //     let res = await fetch(`${apiUrl}/Products`);
-  //     let goods = await res.json();
-  //     dispatch(setGoods(goods));
-  //   } catch (error) {
-  //     console.error("Ошибка при получении данных базы данных:", error);
-  //   }
-  // };
-
-  // async function postGoods() {
-  //   try{
-  //   console.log(goods);
-  //   let arr = [];
-  //   let tempObj;
-  //   let tempCharacteristics;
-
-  //   goods.map(i => {
-  //     tempCharacteristics = []
-  //     console.log(i.charactertics);
-  //     i.charactertics.map(char => {
-  //       tempCharacteristics.push({name: char.name, description: char.desc})
-  //     });
-  //     tempObj = {
-  //       name: i.name,
-  //       Brand: i.brand,
-  //       price: i.price,
-  //       img: i.img,
-  //       isNew: i.new,
-  //       discount: i.discount,
-  //       countToBuy: i.countToBuy,
-  //       charactertics: tempCharacteristics,//null,
-  //       description: i.description ,
-  //       category: i.category,
-  //       orders: null
-  //     };
-  //     arr.push(tempObj);
-      
-  //   })
-    
-  //   let headers = new Headers();
-  //   headers.append("Content-Type", "application/json");
-  //   await fetch("https://localhost:7046/Products", {
-  //       method: 'POST',
-  //       headers: headers,
-  //       body: JSON.stringify(arr)
-  //     }
-  //   )
-
-  //   } catch(err){
-  //     console.log(err.message)
-  //   }
-  // }
-
-  // async function fetchAll() {
-  //   if(firstRender){
-  //     setFetching(true);
-    
-  //     // await postGoods();
-  //     // await fetchGoods();
-  //     // if (!!uid) 
-  //     // await fetchBean(uid);
-  //     // else console.log("net");
-  //     setFetching(false);
-  //     firstRender = false;
-  //   }
-  // }
+  useEffect(()=>{
+    if(firstRender.current){
+      tryFetchUserData();
+      firstRender.current = false;
+    }
+  }, []);
 
   // useEffect(() => {
-  //   fetchAll();
-  // }, []);
+  //   // if(userId)
+  //     UseInitBasket();
+  // }, [userId])
 
   return (
     <QueryClientProvider client={queryClient}>
